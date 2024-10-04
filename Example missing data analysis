@@ -1,0 +1,136 @@
+##Multiple imputation for unique mothers (sensitivty analysis), again, using preterm birth as an example
+
+RO1PISmd <- subset(RO1PIS2, select=c("mother_id", "PregnancyNumber", "Maternal_Age", "BodyMassIndex5",
+                                       "PREVIOUS_CEASAREAN_SECTIONS",
+                                       "PHD", "Pre_Diabetes", "SIMD",
+                                       "DRUG_MISUSE", "SEX_BABY_1", "PARITY",
+                                       "SMOKER_DURING_PREGNANCY",
+                                       "INDUCTION_OF_LABOUR", "CongenitalConditions", "N_I_Death",
+                                       "Miscarriage2", "Stillbirth", "Induced_Abortion",
+                                       "GestationalDiabetes", "Livebirth",
+                                       "Caesarean", "Apgar_5_Min", "NICU",
+                                       "GestationalHypertension", "Preeclampsia", "Eclampsia", "APH", "PPH",
+                                       "PlacentaPraevia", "PlacentaAbruption",  "LBW", "PretermBirth",
+                                       "PerinatalDeaths", "EpilepsyCases2",  
+                                       "AnyAsm4"))
+
+
+
+RO1PISmd <- RO1PISmd %>%
+  ungroup()
+RO1PISmd <- RO1PISmd %>% distinct(mother_id, .keep_all = TRUE)
+
+##conduct best case
+
+RO1PISmd_BC <- RO1PISmd
+misstab <- miss_var_summary(RO1PISmd_BC)
+print(misstab, n=60)
+
+#best case for BMI
+table(RO1PISmd_BC$BodyMassIndex5)
+RO1PISmd_BC$BodyMassIndex5[is.na(RO1PISmd_BC$BodyMassIndex5)] <- "Normal"
+
+#best case for drug misuse
+table(RO1PISmd_BC$DRUG_MISUSE)
+RO1PISmd_BC$DRUG_MISUSE[is.na(RO1PISmd_BC$DRUG_MISUSE)] <- "No"
+
+##conduct worst case
+
+RO1PISmd_WC <- RO1PISmd
+misstab <- miss_var_summary(RO1PISmd_WC)
+print(misstab, n=60)
+
+#worst case for BMI
+table(RO1PISmd_WC$BodyMassIndex5)
+RO1PISmd_WC$BodyMassIndex5[is.na(RO1PISmd_WC$BodyMassIndex5)] <- "Obese"
+
+#best case for drug misuse
+table(RO1PISmd_WC$DRUG_MISUSE)
+RO1PISmd_WC$DRUG_MISUSE[is.na(RO1PISmd_WC$DRUG_MISUSE)] <- "Yes"
+
+#run unadjusted regression
+unadTEST <- glm(PretermBirth ~ EpilepsyCases2, data = RO1PISmd_BC, family = binomial(link = "logit"))
+parameters::model_parameters(unadTEST, exp = TRUE, ci_method="wald")
+
+#run adjusted regression
+adjTEST <- glm(PretermBirth ~ EpilepsyCases2 + Maternal_Age + BodyMassIndex5 + PARITY + PREVIOUS_CEASAREAN_SECTIONS + SEX_BABY_1 + SIMD + DRUG_MISUSE + SMOKER_DURING_PREGNANCY + AnyAsm1, data = RO1PISmd_BC, family = binomial(link = "logit"), na.action = na.omit)
+parameters::model_parameters(adjTEST, exp = TRUE, ci_method="wald")
+
+#run full-adjusted regressions for 1-level data with missing data omitted (complete-case)
+PB1 <- glm(PretermBirth ~ EpilepsyCases2 + Maternal_Age + BodyMassIndex5 + PARITY + PREVIOUS_CEASAREAN_SECTIONS + SEX_BABY_1 + SIMD + PHD + Pre_Diabetes + DRUG_MISUSE + SMOKER_DURING_PREGNANCY + AnyAsm4, data = RO1PISmd, family = binomial(link = "logit"), na.action = na.omit)
+parameters::model_parameters(PB1, exp = TRUE, ci_method="wald")
+
+
+
+#run as best case scenario
+PB1 <- glm(PretermBirth ~ EpilepsyCases2 + Maternal_Age + BodyMassIndex5 + PARITY + PREVIOUS_CEASAREAN_SECTIONS + SEX_BABY_1 + SIMD + PHD + Pre_Diabetes + DRUG_MISUSE + SMOKER_DURING_PREGNANCY + AnyAsm4, data = RO1PISmd_BC, family = binomial(link = "logit"), na.action = na.omit)
+parameters::model_parameters(PB1, exp = TRUE, ci_method="wald")
+
+
+
+#run as WORST case scenario
+PB1 <- glm(PretermBirth ~ EpilepsyCases2 + Maternal_Age + BodyMassIndex5 + PARITY + PREVIOUS_CEASAREAN_SECTIONS + SEX_BABY_1 + SIMD + PHD + Pre_Diabetes + DRUG_MISUSE + SMOKER_DURING_PREGNANCY + AnyAsm4, data = RO1PISmd_WC, family = binomial(link = "logit"), na.action = na.omit)
+parameters::model_parameters(PB1, exp = TRUE, ci_method="wald")
+
+
+
+##CONDUCT Multiple imputation on first deliveries and compare to findings
+#reduce number of vars
+RO1PISmd2 <- subset(RO1PISmd, select=c("mother_id", "PregnancyNumber", "Maternal_Age", "BodyMassIndex5",
+                                       "PREVIOUS_CEASAREAN_SECTIONS",
+                                       "PHD", "Pre_Diabetes", "SIMD",
+                                       "DRUG_MISUSE", "SEX_BABY_1", "PARITY",
+                                       "SMOKER_DURING_PREGNANCY",
+                                       "INDUCTION_OF_LABOUR", "CongenitalConditions", "N_I_Death",
+                                       "Miscarriage2", "Stillbirth", "Induced_Abortion",
+                                       "GestationalDiabetes", "Livebirth",
+                                       "Caesarean", "Apgar_5_Min", "NICU",
+                                       "GestationalHypertension", "Preeclampsia", "Eclampsia", "APH", "PPH",
+                                       "PlacentaPraevia", "PlacentaAbruption",  "LBW", "PretermBirth",
+                                       "PerinatalDeaths", "EpilepsyCases2",  
+                                       "AnyAsm4"))
+
+
+miss_var_summary(RO1PISmd2)
+missing_plot(RO1PISmd2)
+mcar_test(RO1PISmd2)
+
+RO1PISmd2$BodyMassIndex5 <- as.factor(RO1PISmd2$BodyMassIndex5)
+
+MI_0 <- mice(data = RO1PISmd2, m=1, method = "pmm", maxit = 1, seed = 123456, remove.collinear = FALSE)
+MI_0$meth
+meth <- MI_0$meth
+meth["SMOKER_DURING_PREGNANCY"] <- ""
+meth["Miscarriage2"] <- ""
+meth["Induced_Abortion"] <- ""
+meth["PARITY"] <- ""
+meth["PREVIOUS_CEASAREAN_SECTIONS"] <- ""
+meth["SIMD"] <- ""
+meth["SEX_BABY_1"] <- ""
+meth["BodyMassIndex5"] <- "polr"
+meth["DRUG_MISUSE"] <- "logreg"
+
+meth
+pred3 <- MI_0$predictorMatrix
+pred3["BodyMassIndex5", "Miscarriage2"] <- 0
+pred3["DRUG_MISUSE", "Miscarriage2"] <- 0
+pred3["BodyMassIndex5", "Induced_Abortion"] <- 0
+pred3["DRUG_MISUSE", "Induced_Abortion"] <- 0
+
+
+#check imp for logged events
+MI_RO1PIS <- mice(data = RO1PISmd2, m=1, meth = meth, predictorMatrix = pred3, maxit = 1, seed = 123456, remove.collinear = FALSE)
+MI_RO1PIS$loggedEvents
+
+
+#run 5 imputations with 5 iterations
+MI_RO1PIS <- mice(data = RO1PISmd2, m=5, meth = meth, predictorMatrix = pred3, maxit = 5, seed = 123456, remove.collinear = FALSE)
+
+densityplot(MI_RO1PIS, ~ BodyMassIndex5)
+densityplot(MI_RO1PIS, ~ DRUG_MISUSE)
+
+##run adjusted MI analysis on  outcomes
+MIPB <- with(data = MI_RO1PIS, glm(PretermBirth ~ EpilepsyCases2 + Maternal_Age + BodyMassIndex5 + PARITY + PREVIOUS_CEASAREAN_SECTIONS + SEX_BABY_1 + SIMD + PHD + Pre_Diabetes + DRUG_MISUSE + SMOKER_DURING_PREGNANCY + AnyAsm4, family = binomial(link = "logit"), na.action = na.omit))
+summary(MIPB)
+poolMIPB <- summary(pool(MIPB), conf.int = TRUE, exponentiate = TRUE)
+poolMIPB
