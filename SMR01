@@ -1,0 +1,76 @@
+##Load in SMR01##
+
+SMR01test <- SMR01
+
+##inspect and relabel condition variables in SMR01 to diagnosis of epilepsy
+
+table(SMR01test$MAIN_CONDITION)
+is.factor(SMR01test$MAIN_CONDITION)
+SMR01test$MAIN_CONDITION <- as.factor(SMR01test$MAIN_CONDITION)
+levels(SMR01test$MAIN_CONDITION)
+SMR01test$MAIN_CONDITION <- fct_collapse(SMR01test$MAIN_CONDITION, Epilepsy = c("-3450", "-34500", "-34501", "-34502", "-34509", "-3451", "-34510", "-34511", "-34512", "-34513", "-34519", "-3452", "-3453", "-3454", "-3455", "-34550", "-34552", "-34559", "-3456", "-3457", "-3458", "-3459", "G400", "G400 D", "G401", "G402", "G403", "G404", "G405", "G406", "G407", "G408", "G409", "G410", "G411", "G412", "G418", "G419"))
+table(SMR01test$MAIN_CONDITION == "Epilepsy")
+
+unique(SMR01test$OTHER_CONDITION_1)
+table(SMR01test$OTHER_CONDITION_1)
+table(X2021_0269_SMR01_Mothers$OTHER_CONDITION_1)
+is.factor(SMR01test$OTHER_CONDITION_1)
+SMR01test$OTHER_CONDITION_1 <- as.factor(SMR01test$OTHER_CONDITION_1)
+levels(SMR01test$OTHER_CONDITION_1)
+SMR01test$OTHER_CONDITION_1 <- fct_collapse(SMR01test$OTHER_CONDITION_1, Epilepsy = c("-3450", "-34500", "-34501", "-34502", "-34509", "-3451", "-34510", "-34511", "-34512", "-34513", "-34519", "-3452", "-3453", "-3454", "-3455", "-34550", "-34552", "-34559", "-3456", "-3457", "-3458", "-3459", "G400", "G400 D", "G401", "G402", "G403", "G404", "G405", "G406", "G407", "G408", "G409", "G410", "G411", "G412", "G418", "G419"))
+
+unique(SMR01test$OTHER_CONDITION_2)
+table(SMR01test$OTHER_CONDITION_2)
+is.factor(SMR01test$OTHER_CONDITION_2)
+SMR01test$OTHER_CONDITION_2 <- as.factor(SMR01test$OTHER_CONDITION_2)
+levels(SMR01test$OTHER_CONDITION_2)
+SMR01test$OTHER_CONDITION_2 <- fct_collapse(SMR01test$OTHER_CONDITION_2, Epilepsy = c("-3450", "-34500", "-34501", "-34502", "-34509", "-3451", "-34510", "-34511", "-34512", "-34513", "-34519", "-3452", "-3453", "-3454", "-3455", "-34550", "-34552", "-34559", "-3456", "-3457", "-3458", "-3459", "G400", "G400 D", "G401", "G402", "G403", "G404", "G405", "G406", "G407", "G408", "G409", "G410", "G411", "G412", "G418", "G419"))
+
+unique(SMR01test$OTHER_CONDITION_3)
+table(SMR01test$OTHER_CONDITION_3)
+is.factor(SMR01test$OTHER_CONDITION_3)
+SMR01test$OTHER_CONDITION_3 <- as.factor(SMR01test$OTHER_CONDITION_3)
+levels(SMR01test$OTHER_CONDITION_3)
+SMR01test$OTHER_CONDITION_3 <- fct_collapse(SMR01test$OTHER_CONDITION_3, Epilepsy = c("-3450", "-34500", "-34501", "-34502", "-34509", "-3451", "-34510", "-34511", "-34512", "-34513", "-34519", "-3452", "-3453", "-3454", "-3455", "-34550", "-34552", "-34559", "-3456", "-3457", "-3458", "-3459", "G400", "G400 D", "G401", "G402", "G403", "G404", "G405", "G406", "G407", "G408", "G409", "G410", "G411", "G412", "G418", "G419"))
+
+unique(SMR01test$OTHER_CONDITION_4)
+table(SMR01test$OTHER_CONDITION_4)
+is.factor(SMR01test$OTHER_CONDITION_4)
+SMR01test$OTHER_CONDITION_4 <- as.factor(SMR01test$OTHER_CONDITION_4)
+levels(SMR01test$OTHER_CONDITION_4)
+SMR01test$OTHER_CONDITION_4 <- fct_collapse(SMR01test$OTHER_CONDITION_4, Epilepsy = c("-3450", "-34500", "-34501", "-34502", "-34509", "-3451", "-34510", "-34511", "-34512", "-34513", "-34519", "-3452", "-3453", "-3454", "-3455", "-34550", "-34552", "-34559", "-3456", "-3457", "-3458", "-3459", "G400", "G400 D", "G401", "G402", "G403", "G404", "G405", "G406", "G407", "G408", "G409", "G410", "G411", "G412", "G418", "G419"))
+
+unique(SMR01test$OTHER_CONDITION_5)
+table(SMR01test$OTHER_CONDITION_5)
+is.factor(SMR01test$OTHER_CONDITION_5)
+SMR01test$OTHER_CONDITION_5 <- as.factor(SMR01test$OTHER_CONDITION_5)
+levels(SMR01test$OTHER_CONDITION_5)
+SMR01test$OTHER_CONDITION_5 <- fct_collapse(SMR01test$OTHER_CONDITION_5, Epilepsy = c("-3450", "-34500", "-34501", "-34502", "-34509", "-3451", "-34510", "-34511", "-34512", "-34513", "-34519", "-3452", "-3453", "-3454", "-3455", "-34550", "-34552", "-34559", "-3456", "-3457", "-3458", "-3459", "G400", "G400 D", "G401", "G402", "G403", "G404", "G405", "G406", "G407", "G408", "G409", "G410", "G411", "G412", "G418", "G419"))
+
+
+##Now identify epilepsy cases and assign an admission date for future merging to create a prenatal epilepsy variable.
+ 
+SMR01test$SPECIALTY <- as.factor(SMR01test$SPECIALTY)
+SMR01test <- SMR01test %>%
+  mutate(EpilepsyCases = case_when(MAIN_CONDITION == "Epilepsy" ~ "Epilepsy",
+                                   OTHER_CONDITION_1 == "Epilepsy" & SPECIALTY == "AH" ~ "Epilepsy",
+                                   OTHER_CONDITION_2 == "Epilepsy" & SPECIALTY == "AH" ~ "Epilepsy" ,
+                                   OTHER_CONDITION_3 == "Epilepsy" & SPECIALTY == "AH" ~ "Epilepsy" ,
+                                   OTHER_CONDITION_4 == "Epilepsy" & SPECIALTY == "AH" ~ "Epilepsy" ,
+                                   OTHER_CONDITION_5 == "Epilepsy" & SPECIALTY == "AH" ~ "Epilepsy" ,
+                                   TRUE ~ "No_Epilepsy"))
+SMR01test$EpilepsyCases <- fct_other(SMR01test$EpilepsyCases, keep = 'Epilepsy', other_level = 'No_Epilepsy')
+
+SMR01test <- SMR01test %>%
+  mutate(EpilepsyAdmissionDate = case_when(EpilepsyCases == "Epilepsy" ~ paste(ADMISSION_DATE)))
+
+table(SMR01test$EpilepsyCases)
+
+SMR01test <- SMR01test[SMR01test$EpilepsyCases=="Epilepsy", ]
+
+SMR01test <- SMR01test %>%
+  mutate(EpilepsyAdmissionDate = case_when(EpilepsyCases == "Epilepsy" ~ paste(ADMISSION_DATE)))
+
+SMR01test$EpilepsyAdmissionDate <- as.numeric(paste0(SMR01test$EpilepsyAdmissionDate, "01"))
+transform(SMR01test, EpilepsyAdmissionDate=as.Date(as.character(EpilepsyAdmissionDate), "%Y%m%d"))
+SMR01test$EpilepsyAdmissionDate <- ymd(SMR01test$EpilepsyAdmissionDate)
