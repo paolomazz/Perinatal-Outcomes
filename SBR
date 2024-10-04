@@ -1,0 +1,318 @@
+##Load in the Scottish_Birth_Records dataset##
+
+
+SBR <-  Scottish_Birth_Records
+
+
+##inspect and relabel congenital conditions variable
+unique(SBR$CODING_BIRTH_CONGENITAL_ANOM)
+table(SBR$CODING_BIRTH_CONGENITAL_ANOM)
+SBR$CODING_BIRTH_CONGENITAL_ANOM[SBR$CODING_BIRTH_CONGENITAL_ANOM == 5] <- NA
+SBR$CODING_BIRTH_CONGENITAL_ANOM[SBR$CODING_BIRTH_CONGENITAL_ANOM == 6] <- NA
+is.factor(SBR$CODING_BIRTH_CONGENITAL_ANOM)
+SBR$CODING_BIRTH_CONGENITAL_ANOM <- as.factor(SBR$CODING_BIRTH_CONGENITAL_ANOM)
+levels(SBR$CODING_BIRTH_CONGENITAL_ANOM)
+SBR$CODING_BIRTH_CONGENITAL_ANOM <- fct_collapse(SBR$CODING_BIRTH_CONGENITAL_ANOM, None = c("1"), Yes = c("2", "3", "4"), Suspected = c("5"), NotKnown = c("6"))
+table(SBR$CODING_BIRTH_CONGENITAL_ANOM)
+SBR$CODING_BIRTH_CONGENITAL_ANOM <- fct_collapse(SBR$CODING_BIRTH_CONGENITAL_ANOM, CongenitalConditions = c("Yes"), No_CongenitalConditions = c("None"))
+table(SBR$CODING_BIRTH_CONGENITAL_ANOM)
+SBR <- SBR %>%
+  mutate(CongenitalConditions = case_when(CODING_BIRTH_CONGENITAL_ANOM == "CongenitalConditions" ~ "CongenitalCondition", TRUE ~ "No_CongenitalCondition"))
+table(SBR$CongenitalConditions)
+
+##inspect and relabel bay outcome variable as livebirth or stillbirth
+unique(SBR$CODING_BABY_OUTCOME)
+table(SBR$CODING_BABY_OUTCOME)
+is.factor(SBR$CODING_BABY_OUTCOME)
+SBR$CODING_BABY_OUTCOME <- as.factor(SBR$CODING_BABY_OUTCOME)
+levels(SBR$CODING_BABY_OUTCOME)
+SBR$CODING_BABY_OUTCOME <- fct_collapse(SBR$CODING_BABY_OUTCOME, Livebirth = c("1"), Stillbirth = c("2"))
+table(SBR$CODING_BABY_OUTCOME)
+
+
+
+##inspect birth weight variable
+table(SBR$CODING_BIRTH_WEIGHT)
+is.numeric(SBR$CODING_BIRTH_WEIGHT)
+SBR$CODING_BIRTH_WEIGHT[SBR$CODING_BIRTH_WEIGHT < 500] <- NA
+SBR <- SBR %>% mutate(LBW = case_when(CODING_BIRTH_WEIGHT < 2500 ~ "LBW", TRUE ~ "No_LBW"))
+SBR$LBW <- fct_other(SBR$LBW, keep = 'LBW', other_level = 'No_LBW')
+
+table(SBR$LBW)
+
+
+
+table(SBR$CODING_BIRTH_APGAR_SCORE_5)
+SBR$CODING_BIRTH_APGAR_SCORE_5[SBR$CODING_BIRTH_APGAR_SCORE_5 == 21] <- NA
+SBR$CODING_BIRTH_APGAR_SCORE_5[SBR$CODING_BIRTH_APGAR_SCORE_5 == 36] <- NA
+SBR$CODING_BIRTH_APGAR_SCORE_5[SBR$CODING_BIRTH_APGAR_SCORE_5 == 40] <- NA
+SBR$CODING_BIRTH_APGAR_SCORE_5[SBR$CODING_BIRTH_APGAR_SCORE_5 == 41] <- NA
+SBR$CODING_BIRTH_APGAR_SCORE_5[SBR$CODING_BIRTH_APGAR_SCORE_5 == 99] <- NA
+is.factor(SBR$CODING_BIRTH_APGAR_SCORE_5)
+SBR$CODING_BIRTH_APGAR_SCORE_5 <- as.factor(SBR$CODING_BIRTH_APGAR_SCORE_5)
+SBR$CODING_BIRTH_APGAR_SCORE_5 <- fct_collapse(SBR$CODING_BIRTH_APGAR_SCORE_5, SevenandUnderandRR = c("0", "00", "1", "01", "2", "02", "3", "03", "4", "04", "5", "05", "6", "06", "7", "07", "RR"), EightToTen = c("8", "08", "9", "09", "10"))
+levels(SBR$CODING_BIRTH_APGAR_SCORE_5)                                                              
+table(SBR$CODING_BIRTH_APGAR_SCORE_5)                                                              
+                                                              
+
+SBR$Other_diag_34 <- as.character(SBR$Other_diag_34)
+SBR$Other_diag_35 <- as.character(SBR$Other_diag_35)
+SBR$Other_diag_36 <- as.character(SBR$Other_diag_36)
+SBR$Other_diag_37 <- as.character(SBR$Other_diag_37)
+SBR$Other_diag_38 <- as.character(SBR$Other_diag_38)
+SBR$Other_diag_39 <- as.character(SBR$Other_diag_39)
+SBR$Other_diag_40 <- as.character(SBR$Other_diag_40)
+SBR$Other_diag_41 <- as.character(SBR$Other_diag_41)
+SBR$Other_diag_42 <- as.character(SBR$Other_diag_42)
+SBR$Other_diag_43 <- as.character(SBR$Other_diag_43)
+SBR$Other_diag_44 <- as.character(SBR$Other_diag_44)
+SBR$Other_diag_45 <- as.character(SBR$Other_diag_45)
+SBR$Other_diag_46 <- as.character(SBR$Other_diag_46)
+SBR$Other_diag_47 <- as.character(SBR$Other_diag_47)
+SBR$Other_diag_48 <- as.character(SBR$Other_diag_48)
+SBR$Other_diag_49 <- as.character(SBR$Other_diag_49)
+
+
+##use this code for any congenital conditions excluding chromosomal abnormalities
+SBR <- SBR %>%
+  mutate(across(Other_diag_1:Other_diag_49, ~ fct_collapse(.,
+                                                           CongenitalConditions = c("-75699", "-75694", "-75692", "-75688", "-75686", "-75680", "-75671", "-75670", "-75669", "-75648", "-75647", "-75644",
+                                                                                    "-75643", "-75638", "-75632", "-75619", "-75617", "-75612", "-75611", "-75610", "-75609", "-75608", "-75607", "-75606",
+                                                                                    "-75604", "-75603", "-75602", "-75600", "-75581", "-75580", "-75568", "-75566", "-75564", "-75562", "-75561", "-75560",
+                                                                                    "-75559", "-75558", "-75555", "-75552", "-75551", "-75550", "-75549", "-75548", "-75544", "-75543", "-75538", "-75536",
+                                                                                    "-75535", "-75532", "-75529", "-75528", "-75526", "-75525", "-75524", "-75523", "-75521", "-75520", "-75519", "-75513",
+                                                                                    "-75512", "-75511", "-75510", "-75509", "-75502", "-75501", "-75500", "-75488", "-75485", "-75484", "-75481", "-75478",
+                                                                                    "-75473", "-75471", "-75470", "-75469", "-75460", "-75459", "-75452", "-75451", "-75450", "-75444", "-75443", "-75432",
+                                                                                    "-75431", "-75430", "-75422", "-75420", "-75405", "-75403", "-75402", "-75400", "-74788", "-74732", "-74729", "-74719",
+                                                                                    "-74711", "-74699", "-74693", "-74692", "-74688", "-74601", "-74560", "-74559", "-74550", "-74549", "-74548", "-74540", "-74520",
+                                                                                    "-74519", "-74501", "-74491", "-74490", "-74488", "-74448", "-74441", "-74440", "-74428", "-74424", "-74423", "-74422",
+                                                                                    "-74421", "-74412", "-74411", "-74410", "-74409", "-74400", "-74367", "-74366", "-74365", "-74363", "-74362", "-74361",
+                                                                                    "-74360", "-74359", "-74352", "-74351", "-74350", "-74349", "-74348", "-74343", "-74342", "-74340", "-74339", "-74332",
+                                                                                    "-74320", "-74288", "-74248", "-74241", "-74239", "-74223", "-74221", "-74208", "-74200", "-74199", "-74198", "-74194",
+                                                                                    "-74193", "-74109", "-7569", "-7568", "-7566", "-7560", "-7559", "-7558", "-7556", "-7555", "-7553", "-7552",
+                                                                                    "-7551", "-7550", "-7548", "-7547", "-7546", "-7545", "-7544", "-7543", "-7542", "-7541", "-7540", "-7479", "-7476", "-7475",
+                                                                                    "-7470", "-7469", "-7468",  "-7467", "-7466", "-7463" , "-7460", "-7459",  "-7455", "-7454",  "-7444", "-7443",  "-7442", "-7441", "-7440",
+                                                                                    "-7439", "-7438", "-7436", "-7432", "-7431", "-7422", "-7421", "-7419", "-7429", "-74290",
+                                                                                    "Q00", "Q000", "Q001", "Q002", "Q01", "Q010", "Q011", "Q012", "Q018",
+                                                                                    "Q019", "Q02", "Q02X", "Q03", "Q030", "Q031", "Q038", "Q039", "Q04",
+                                                                                    "Q040", "Q041", "Q042", "Q043", "Q044", "Q045", "Q046", "Q048",
+                                                                                    "Q049", "Q05", "Q050", "Q051", "Q052", "Q053", "Q054", "Q055",
+                                                                                    "Q056", "Q057", "Q058", "Q059", "Q06", "Q060", "Q061", "Q062",
+                                                                                    "Q063", "Q064", "Q068", "Q069", "Q07", "Q070", "Q078", "Q079",
+                                                                                    "Q20", "Q200", "Q201", "Q202", "Q203", "Q204", "Q205", "Q206", "Q208", "Q209",
+                                                                                    "Q21", "Q210", "Q211", "Q212", "Q213", "Q214",  "Q218", "Q219",
+                                                                                    "Q22", "Q220", "Q221", "Q222", "Q223", "Q224", "Q225", "Q226",
+                                                                                    "Q228", "Q229", "Q23", "Q230", "Q231", "Q232", "Q233", "Q234",
+                                                                                    "Q238", "Q239", "Q24", "Q240", "Q241", "Q242", "Q243", "Q2442",
+                                                                                    "Q245", "Q246", "Q248", "Q249", "Q25", "Q250", "Q251", "Q252",
+                                                                                    "Q253", "Q254", "Q255", "Q256", "Q257", "Q258", "Q259", "Q26",
+                                                                                    "Q260", "Q261", "Q262", "Q263", "Q264", "Q265", "Q266", "Q268",
+                                                                                    "Q269", "Q35", "Q350", "Q351", "Q352", "Q353", "Q354", "Q355",
+                                                                                    "Q356", "Q357", "Q358", "Q359",
+                                                                                    "Q36", "Q360", "Q361", "Q369", "Q37", "Q370", "Q371", "Q372",
+                                                                                    "Q373", "Q374", "Q375", "Q378", "Q379",
+                                                                                    "Q65", "Q650", "Q651", "Q652", "Q653", "Q654", "Q655", "Q656",
+                                                                                    "Q658", "Q659", "Q66", "Q660", "Q661", "Q662", "Q663", "Q664",
+                                                                                    "Q665", "Q666", "Q667", "Q668", "Q669", "Q67",  "Q670", "Q671",
+                                                                                    "Q672", "Q673", "Q674", "Q675", "Q676", "Q677", "Q678", "Q68",
+                                                                                    "Q680", "Q681", "Q682", "Q683",  "Q684", "Q685", "Q688", "Q69",
+                                                                                    "Q690", "Q691", "Q692", "Q699", "Q70", "Q700", "Q701", "Q702",
+                                                                                    "Q703", "Q704", "Q709", "Q71", "Q710", "Q711", "Q712", "Q713",
+                                                                                    "Q714", "Q715", "Q716", "Q718", "Q719", "Q72", "Q720", "Q721",
+                                                                                    "Q722", "Q723", "Q724", "Q725", "Q726", "Q727", "Q728", "Q729",
+                                                                                    "Q73", "Q730", "Q731", "Q738", "Q74", "Q740", "Q741", "Q742",
+                                                                                    "Q743", "Q748", "Q749", "Q866", "Q8703", "Q8680", "P350", "P351", "P354", "P358", "P371"))))
+
+
+##use this code for any congenital conditions including chromosomal abnormalities
+SBR <- SBR %>%
+  mutate(across(Other_diag_1:Other_diag_49, ~ fct_collapse(.,
+                                                           CongenitalConditions = c("-75999", "-75990", "-75989", "-75986", "-75984", "-75980", "-75961", "-75922", "-75921", "-75918", "-75911", "-75899",
+                                                                                    "-75879", "-75871", "-75870", "-75869", "-75862", "-75859", "-75855", "-75853", "-75838", "-75829", "-75810", "-75809",
+                                                                                    "-75802", "-75800", "-75792", "-75791", "-75790", "-75768", "-75765", "-75762", "-75758", "-75751", "-75750", "-75748",
+                                                                                    "-75740", "-75739", "-75738", "-75737", "-75736", "-75735", "-75734", "-75733", "-75732", "-75731", "-75730", "-75719",
+                                                                                    "-75699", "-75694", "-75692", "-75688", "-75686", "-75680", "-75671", "-75670", "-75669", "-75648", "-75647", "-75644",
+                                                                                    "-75643", "-75638", "-75632", "-75619", "-75617", "-75612", "-75611", "-75610", "-75609", "-75608", "-75607", "-75606",
+                                                                                    "-75604", "-75603", "-75602", "-75600", "-75581", "-75580", "-75568", "-75566", "-75564", "-75562", "-75561", "-75560",
+                                                                                    "-75559", "-75558", "-75555", "-75552", "-75551", "-75550", "-75549", "-75548", "-75544", "-75543", "-75538", "-75536",
+                                                                                    "-75535", "-75532", "-75529", "-75528", "-75526", "-75525", "-75524", "-75523", "-75521", "-75520", "-75519", "-75513",
+                                                                                    "-75512", "-75511", "-75510", "-75509", "-75502", "-75501", "-75500", "-75488", "-75485", "-75484", "-75481", "-75478",
+                                                                                    "-75473", "-75471", "-75470", "-75469", "-75460", "-75459", "-75452", "-75451", "-75450", "-75444", "-75443", "-75432",
+                                                                                    "-75431", "-75430", "-75422", "-75420", "-75405", "-75403", "-75402", "-75400", "-75399", "-75390", "-75388", "-75360",
+                                                                                    "-75348", "-75342", "-75338", "-75335", "-75334", "-75333", "-75332", "-75331", "-75329", "-75322", "-75320", "-75318",
+                                                                                    "-75316", "-75313", "-75311", "-75310", "-75301", "-75300", "-75288", "-75286", "-75285", "-75282", "-75281", "-75280",
+                                                                                    "-75279", "-75262", "-75261", "-75260", "-75253", "-75252", "-75251", "-75250", "-75248", "-75247", "-75246", "-75245",
+                                                                                    "-75244", "-75243", "-75231", "-75212", "-75162", "-75158", "-75153", "-75151", "-75149", "-75131", "-75124", "-75123",
+                                                                                    "-75090", "-75051", "-75028", "-75027", "-75022", "-75019", "-75018", "-75012", "-75011", "-74929", "-74922", "-74921",
+                                                                                    "-74920", "-74919", "-74912", "-74911", "-74910", "-74909", "-74908", "-74907", "-74906", "-74904", "-74903", "-74902",
+                                                                                    "-74901", "-74900", "-74836", "-74832", "-74819", "-74818", "-74810", "-74788", "-74732", "-74729", "-74719", "-74711",
+                                                                                    "-74699", "-74693", "-74692", "-74688", "-74601", "-74560", "-74559", "-74550", "-74549", "-74548", "-74540", "-74520",
+                                                                                    "-74519", "-74501", "-74491", "-74490", "-74488", "-74448", "-74441", "-74440", "-74428", "-74424", "-74423", "-74422",
+                                                                                    "-74421", "-74412", "-74411", "-74410", "-74409", "-74400", "-74367", "-74366", "-74365", "-74363", "-74362", "-74361",
+                                                                                    "-74360", "-74359", "-74352", "-74351", "-74350", "-74349", "-74348", "-74343", "-74342", "-74340", "-74339", "-74332",
+                                                                                    "-74320", "-74288", "-74248", "-74241", "-74239", "-74223", "-74221", "-74208", "-74200", "-74199", "-74198", "-74194",
+                                                                                    "-74193", "-74109", "-7597", "-7595", "-7588", "-7587", "-7584", "-7582", "-7580", "-7579", "-7578", "-7576", "-7574",  
+                                                                                    "-7573", "-7572", "-7570", "-7569", "-7568", "-7566", "-7560", "-7559", "-7558", "-7556", "-7555", "-7553", "-7552",
+                                                                                    "-7551", "-7550", "-7548", "-7547", "-7546", "-7545", "-7544", "-7543", "-7542", "-7541", "-7540", "-7539", "-7538",
+                                                                                    "-7533", "-7532", "-7531", "-7530",  "-7529", "-7528", "-7526", "-7525", "-7524", "-7520", "-7512", "-7511", "-7509" ,
+                                                                                    "-7506", "-7503", "-7500", "-7492", "-7491", "-7490", "-7483", "-7480", "-7479", "-7476", "-7475", "-7470", "-7469",
+                                                                                    "-7468",  "-7467", "-7466", "-7463" , "-7460", "-7459",  "-7455", "-7454",  "-7444", "-7443",  "-7442", "-7441", "-7440", "-7439", "-7438", "-7436", "-7432", "-7431", "-7422", "-7421", "-7419",
+                                                                                    "Q00", "Q000", "Q001", "Q002", "Q01", "Q010", "Q011", "Q012", "Q018",
+                                                                                    "Q019", "Q02", "Q02X", "Q03", "Q030", "Q031", "Q038", "Q039", "Q04",
+                                                                                    "Q040", "Q041", "Q042", "Q043", "Q044", "Q045", "Q046", "Q048",
+                                                                                    "Q049", "Q05", "Q050", "Q051", "Q052", "Q053", "Q054", "Q055",
+                                                                                    "Q056", "Q057", "Q058", "Q059", "Q06", "Q060", "Q061", "Q062",
+                                                                                    "Q063", "Q064", "Q068", "Q069", "Q07", "Q070", "Q078", "Q079",
+                                                                                    "Q10", "Q100", "Q101", "Q102", "Q103", "Q104", "Q105", "Q106",
+                                                                                    "Q107", "Q11", "Q110", "Q111", "Q112", "Q113", "Q12", "Q120",
+                                                                                    "Q121", "Q122", "Q123", "Q124", "Q128", "Q129", "Q13", "Q130",
+                                                                                    "Q131", "Q132", "Q133", "Q134", "Q135", "Q138", "Q139", "Q14",
+                                                                                    "Q140", "Q141", "Q142", "Q143", "Q148", "Q149", "Q15", "Q150",
+                                                                                    "Q158", "Q159", "Q16", "Q160", "Q161", "Q162", "Q163", "Q164",
+                                                                                    "Q165", "Q169", "Q17", "Q170", "Q171", "Q172", "Q173", "Q174",
+                                                                                    "Q175", "Q178", "Q179", "Q18", "Q180", "Q181", "Q182", "Q183",
+                                                                                    "Q184", "Q185", "Q186", "Q187", "Q188", "Q189", "Q20", "Q200",
+                                                                                    "Q201", "Q202", "Q203", "Q204", "Q205", "Q206", "Q208", "Q209",
+                                                                                    "Q21", "Q210", "Q211", "Q212", "Q213", "Q214",  "Q218", "Q219",
+                                                                                    "Q22", "Q220", "Q221", "Q222", "Q223", "Q224", "Q225", "Q226",
+                                                                                    "Q228", "Q229", "Q23", "Q230", "Q231", "Q232", "Q233", "Q234",
+                                                                                    "Q238", "Q239", "Q24", "Q240", "Q241", "Q242", "Q243", "Q2442",
+                                                                                    "Q245", "Q246", "Q248", "Q249", "Q25", "Q250", "Q251", "Q252",
+                                                                                    "Q253", "Q254", "Q255", "Q256", "Q257", "Q258", "Q259", "Q26",
+                                                                                    "Q260", "Q261", "Q262", "Q263", "Q264", "Q265", "Q266", "Q268",
+                                                                                    "Q269", "Q27", "Q270", "Q271", "Q272", "Q273", "Q274", "Q278",
+                                                                                    "Q279", "Q28", "Q280", "Q281", "Q282", "Q283", "Q288", "Q289",
+                                                                                    "Q30", "Q300", "Q301", "Q302", "Q303", "Q308", "Q309", "Q31",
+                                                                                    "Q310", "Q311", "Q312", "Q313", "Q314", "Q315", "Q318", "Q319",
+                                                                                    "Q32", "Q320", "Q321", "Q322", "Q323", "Q324", "Q33", "Q330",
+                                                                                    "Q331", "Q332", "Q333", "Q334", "Q335", "Q336", "Q338", "Q339",
+                                                                                    "Q34", "Q340", "Q341", "Q348", "Q349", "Q35", "Q350", "Q351",
+                                                                                    "Q352", "Q353", "Q354", "Q355", "Q356", "Q357", "Q358", "Q359",
+                                                                                    "Q36", "Q360", "Q361", "Q369", "Q37", "Q370", "Q371", "Q372",
+                                                                                    "Q373", "Q374", "Q375", "Q378", "Q379", "Q38", "Q380", "Q381",
+                                                                                    "Q382", "Q383", "Q384", "Q385", "Q386", "Q387", "Q388", "Q39",
+                                                                                    "Q390", "Q391", "Q392", "Q393", "Q394", "Q395", "Q396", "Q398",
+                                                                                    "Q399", "Q40", "Q400", "Q401", "Q402", "Q403", "Q408", "Q409",
+                                                                                    "Q41", "Q410", "Q411", "Q412", "Q418", "Q419", "Q42", "Q420",
+                                                                                    "Q421", "Q422", "Q423", "Q428", "Q429", "Q43", "Q430", "Q431",
+                                                                                    "Q432", "Q433", "Q434", "Q435", "Q436", "Q437", "Q438", "Q439",
+                                                                                    "Q44", "Q440", "Q441", "Q442", "Q443", "Q444", "Q445", "Q446",
+                                                                                    "Q447", "Q45", "Q450", "Q451", "Q452", "Q453", "Q458", "Q459",
+                                                                                    "Q50", "Q500", "Q501", "Q502", "Q503", "Q504", "Q505", "Q506",
+                                                                                    "Q51", "Q510", "Q511", "Q512", "Q513", "Q514", "Q515", "Q516",
+                                                                                    "Q517", "Q518", "Q519", "Q52", "Q520", "Q521", "Q522", "Q523",
+                                                                                    "Q524", "Q525", "Q526", "Q527", "Q528", "Q529", "Q53", "Q530",
+                                                                                    "Q531", "Q532", "Q539", "Q54", "Q540", "Q541", "Q542", "Q543",
+                                                                                    "Q544", "Q548", "Q549", "Q55", "Q550", "Q551", "Q552", "Q553",
+                                                                                    "Q554", "Q555", "Q556", "Q558", "Q559", "Q56", "Q560", "Q561",
+                                                                                    "Q562", "Q563", "Q564", "Q60", "Q600", "Q601", "Q602", "Q603",
+                                                                                    "Q604", "Q605", "Q606", "Q61", "Q610", "Q611", "Q612", "Q613",
+                                                                                    "Q614", "Q615", "Q618", "Q619", "Q62", "Q620", "Q621", "Q622",
+                                                                                    "Q623", "Q624", "Q625", "Q626", "Q627", "Q628", "Q63", "Q630",
+                                                                                    "Q631", "Q632", "Q633", "Q638", "Q639", "Q64", "Q640", "Q641",
+                                                                                    "Q642", "Q643", "Q644", "Q645", "Q646", "Q647", "Q648", "Q649",
+                                                                                    "Q65", "Q650", "Q651", "Q652", "Q653", "Q654", "Q655", "Q656",
+                                                                                    "Q658", "Q659", "Q66", "Q660", "Q661", "Q662", "Q663", "Q664",
+                                                                                    "Q665", "Q666", "Q667", "Q668", "Q669", "Q67",  "Q670", "Q671",
+                                                                                    "Q672", "Q673", "Q674", "Q675", "Q676", "Q677", "Q678", "Q68",
+                                                                                    "Q680", "Q681", "Q682", "Q683",  "Q684", "Q685", "Q688", "Q69",
+                                                                                    "Q690", "Q691", "Q692", "Q699", "Q70", "Q700", "Q701", "Q702",
+                                                                                    "Q703", "Q704", "Q709", "Q71", "Q710", "Q711", "Q712", "Q713",
+                                                                                    "Q714", "Q715", "Q716", "Q718", "Q719", "Q72", "Q720", "Q721",
+                                                                                    "Q722", "Q723", "Q724", "Q725", "Q726", "Q727", "Q728", "Q729",
+                                                                                    "Q73", "Q730", "Q731", "Q738", "Q74", "Q740", "Q741", "Q742",
+                                                                                    "Q743", "Q748", "Q749", "Q75", "Q750", "Q751", "Q752", "Q753",
+                                                                                    "Q754", "Q755", "Q758", "Q759", "Q76", "Q760", "Q761", "Q762",
+                                                                                    "Q763", "Q764", "Q765", "Q766", "Q767", "Q768", "Q769", "Q77",
+                                                                                    "Q770", "Q771", "Q772", "Q773", "Q774", "Q775", "Q776", "Q777",
+                                                                                    "Q778", "Q779", "Q78", "Q780", "Q781", "Q782", "Q783", "Q784",
+                                                                                    "Q785", "Q786", "Q788", "Q789", "Q79", "Q790", "Q791", "Q792",
+                                                                                    "Q793", "Q794", "Q795", "Q796", "Q798", "Q799", "Q80", "Q800",
+                                                                                    "Q801", "Q802", "Q803", "Q804", "Q808", "Q809", "Q81", "Q810",
+                                                                                    "Q811", "Q812", "Q818", "Q819", "Q82", "Q820", "Q821", "Q822",
+                                                                                    "Q823", "Q824", "Q825", "Q828", "Q829", "Q83", "Q830", "Q831", "Q832", "Q833", "Q838", "Q839", "Q84", "Q840", "Q841", "Q842", "Q843", "Q844", "Q845", "Q846", "Q848", "Q849", "Q85", "Q850", "Q851", "Q858", "Q859", "Q86", "Q860", "Q861", "Q862", "Q868", "Q87", "Q870", "Q871", "Q872", "Q873", "Q874", "Q875", "Q878", "Q89", "Q890", "Q891", "Q892", "Q893", "Q894", "Q897", "Q898", "Q899", "Q90", "Q900", "Q901", "Q902", "Q909", "Q91", "Q910", "Q911", "Q912", "Q913", "Q914", "Q915", "Q916", "Q917", "Q92", "Q920", "Q921", "Q922", "Q923", "Q924", "Q925", "Q926", "Q927", "Q928", "Q929", "Q93", "Q930", "Q931", "Q932", "Q933", "Q934", "Q935", "Q936", "Q937", "Q938", "Q939", "Q95", "Q950", "Q951", "Q952", "Q953", "Q954", "Q955", "Q958", "Q959", "Q96", "Q960", "Q961", "Q962", "Q963", "Q964", "Q968", "Q969", "Q97", "Q970", "Q971", "Q972", "Q973", "Q978", "Q979", "Q98", "Q980", "Q981", "Q982", "Q983", "Q984", "Q985", "Q986", "Q987", "Q988", "Q989", "Q99", "Q990", "Q991", "Q992", "Q998", "Q999",
+                                                                                    "Q00", "Q01", "Q02", "Q03", "Q04", "Q041", "Q042", "Q8703", "Q040", "Q040b", "Q0400", "Q05", "Q06", "Q07", "Q8703",
+                                                                                    "Q10", "Q110", "D111", "Q112", "Q11", "Q12", "Q120", "Q13", "Q14", "Q15", "Q150",
+                                                                                    "Q16", "Q160", "Q161", "Q17", "Q18",
+                                                                                    "Q20", "Q200", "Q211", "Q250", "Q201", "Q202", "Q203", "Q204", "Q205", "Q206", "Q21", "Q212", "Q213", "Q214", "Q2182", "Q22", "Q220", "Q224", "Q225", "Q226", "Q23", "Q230", "Q232", "Q234", "Q24", "Q242", "Q244", "Q245", "Q251", "Q252", "Q253", "Q262", "Q263", "Q25", "Q26",
+                                                                                    "Q300", "Q32", "Q33", "Q34", "Q3380",
+                                                                                    "Q35", "Q36", "Q37",
+                                                                                    "Q38", "Q39", "Q40", "Q41", "Q42", "Q43", "Q44", "Q45", "Q790", "Q390", "Q391", "Q410", "Q411", "Q412", "Q418", "Q420", "Q421", "Q422", "Q423", "Q431", "Q442", "Q451", "Q433",
+                                                                                    "Q792", "Q793", "Q795", "Q60", "Q61", "Q62", "Q63", "Q64", "Q794", "Q600", "Q601",
+                                                                                    "Q606", "Q614b", "Q6140", "Q6141", "Q620", "Q621", "Q623", "Q631", "Q632", "Q640",
+                                                                                    "Q641", "Q642b", "Q6420", "Q794", "Q50", "Q51", "Q52", "Q53", "Q54", "Q55", "Q56",
+                                                                                    "Q65", "Q66", "Q67", "Q68", "Q69", "Q70", "Q71", "Q72", "Q73", "Q74", "Q710", "Q712",
+                                                                                    "Q7180", "Q720", "Q722", "Q7280", "Q730", "Q7131", "Q714", "Q7231", "Q725", "Q715",
+                                                                                    "Q726", "Q716", "Q727", "Q711", "Q721", "Q731", "Q660", "Q650", "Q651", "Q652", "Q69",
+                                                                                    "Q70", "P350", "P351", "P354", "P358", "P371", "Q0435", "Q206", "Q240", "Q3381", "Q411",
+                                                                                    "Q412", "Q418", "Q710", "Q712", "Q7180", "Q720", "Q722", "Q7280", "Q730", "Q750", "Q793",
+                                                                                    "Q7980", "Q7982", "Q86", "Q8706", "Q8708", "Q8724", "Q8726", "Q890", "Q893", "Q894",
+                                                                                    "Q8980", "Q750", "Q4471", "Q6190", "Q7402", "Q7484", "Q751", "Q754", "Q7581", "Q77",
+                                                                                    "Q780", "Q781", "Q782", "Q783", "Q784", "Q785", "Q786", "Q788", "Q789", "Q796", "Q80",
+                                                                                    "Q81", "Q820", "Q821", "Q822", "Q823", "Q824", "Q8282", "Q8283", "Q850", "Q851", "Q8581",
+                                                                                    "Q87", "Q8934", "Q90", "Q91", "Q92", "Q93", "Q96", "Q97", "Q98", "Q99", "D821",
+                                                                                    "Q770", "Q771", "Q772", "Q778", "Q914", "Q915", "Q916", "Q917", "Q910", "Q911",
+                                                                                    "Q912", "Q913", "Q927"))))
+
+SBR <- SBR %>%
+  mutate(across(Other_diag_1:Other_diag_49, ~ fct_other(.,
+                                                        keep = 'CongenitalConditions', other_level = 'other')))
+
+
+SBR <- SBR %>%
+  mutate(CongenitalConditions = case_when(CODING_BIRTH_CONGENITAL_ANOM == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_1 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_2 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_3 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_4 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_5 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_6 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_7 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_8 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_9 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_10 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_11 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_12 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_13 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_14 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_15 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_16 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_17 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_18 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_19 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_20 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_21 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_22 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_23 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_24 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_25 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_26 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_27 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_28 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_29 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_30 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_31 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_32 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_33 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_34 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_35 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_36 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_37 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_38 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_39 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_40 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_41 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_42 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_43 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_44 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_45 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_46 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_47 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_48 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          Other_diag_49 == "CongenitalConditions" ~ "CongenitalConditions",
+                                          TRUE ~ "No_CongenitalConditions"))
+
+table(SBR$CongenitalConditions)
+
+##subset SBR to include only neccessary variables
+SBR2 <- subset(SBR, select = c("child_id", "CongenitalConditions", "CODING_BABY_OUTCOME", "CODING_BIRTH_APGAR_SCORE_5", "CODING_BIRTH_WEIGHT"))
