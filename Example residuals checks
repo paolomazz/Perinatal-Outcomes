@@ -1,0 +1,11 @@
+Check dispersion and residuals
+##this code is for checking residuals. I have used preterm birth as an example again.
+
+par("mar")
+par(mar=c(1,1,1,1))
+
+simulationOutput_PB <- simulateResiduals(fittedModel = CCml_Preterm, plot = F)
+testDispersion(simulationOutput_PB)
+plotQQunif(simulationOutput_PB)
+plotResiduals(simulationOutput_PB)
+testOutliers(simulationOutput_PB, type = "bootstrap", plot = TRUE)
