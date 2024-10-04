@@ -1,0 +1,37 @@
+##Forest Plots for outcomes
+##Now I want to create a forest plot to illustrate the odds ratios and confidence intervals for all outcomes in cohorts one and two. This will provide a visual representation of any differences and similarities between findings cross time. I have used preterm birth as an example.
+
+##create a forest plot for OR 95CIs in WWE vs WWoE in cohort 1 and 2
+
+library(broom.mixed)
+
+##call model for 1992-2008 cohort
+Ccml_Preterm
+
+##call model for 2009-2021 cohort
+CCml_Preterm2
+
+##create plots
+
+Preterm <- plot_models(CCml_Preterm, CCml_Preterm2,
+            rm.terms = c("Maternal_Age [Aged_35_and_over]", "PREVIOUS_CEASAREAN_SECTIONS [Yes]",
+                         "PARITY [Yes_oneormore]", "SEX_BABY_1 [Female]", "PHD [PHD]",
+                         "SIMD.L", "SIMD.Q", "SIMD.C", "SIMD^4", "SIMD^5",
+                         "SIMD^6", "SIMD^7", "SIMD^8", "SIMD^9", "Pre_Diabetes [Preexisting]"),
+            colors = "Accent",
+            axis.labels = "Preterm Birth",
+            axis.title = "Odds Ratio (95% CI)",
+            m.labels = c("Cohort One", "Cohort Two"),
+            wrap.labels = 1,
+            axis.lim = c(0,10),
+            show.values = FALSE,
+            ci.lvl = .95,
+            dot.size = 2.0,
+            vline.color = "Black",
+            line.size = 0.5,
+            spacing = 0.20)
+
+
+Preterm
+Preterm2 <- Preterm + scale_y_continuous(limits = 1*c (0, 5))
+Preterm2
