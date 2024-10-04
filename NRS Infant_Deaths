@@ -1,0 +1,146 @@
+##Load in NRS_Infant_Deaths##
+
+InfantDeaths <-  NRS_Infant_Deaths
+
+
+##inspect and relabel cause of death as epilepsy or other
+unique(InfantDeaths$UNDERLYING_CAUSE_OF_DEATH)
+table(InfantDeaths$UNDERLYING_CAUSE_OF_DEATH)
+is.factor(InfantDeaths$UNDERLYING_CAUSE_OF_DEATH)
+InfantDeaths$UNDERLYING_CAUSE_OF_DEATH <- as.factor(InfantDeaths$UNDERLYING_CAUSE_OF_DEATH)
+levels(InfantDeaths$UNDERLYING_CAUSE_OF_DEATH)
+InfantDeaths$UNDERLYING_CAUSE_OF_DEATH <- fct_collapse(InfantDeaths$UNDERLYING_CAUSE_OF_DEATH, Epilepsy = c("3453", "3459", "G401", "G402", "G403", "G404", "G405", "G408", "G409", "G419"))
+InfantDeaths$UNDERLYING_CAUSE_OF_DEATH <- fct_other(InfantDeaths$UNDERLYING_CAUSE_OF_DEATH, keep = 'Epilepsy', other_level = 'other')
+table(InfantDeaths$UNDERLYING_CAUSE_OF_DEATH)
+
+
+unique(InfantDeaths$CAUSE_OF_DEATH_CODE_0)
+table(InfantDeaths$CAUSE_OF_DEATH_CODE_0)
+is.factor(InfantDeaths$CAUSE_OF_DEATH_CODE_0)
+InfantDeaths$CAUSE_OF_DEATH_CODE_0 <- as.factor(InfantDeaths$CAUSE_OF_DEATH_CODE_0)
+levels(InfantDeaths$CAUSE_OF_DEATH_CODE_0)
+InfantDeaths$CAUSE_OF_DEATH_CODE_0 <- fct_collapse(InfantDeaths$CAUSE_OF_DEATH_CODE_0, Epilepsy = c("3453", "3459", "G401", "G402", "G403", "G404", "G405", "G408", "G409", "G419"))
+InfantDeaths$CAUSE_OF_DEATH_CODE_0 <- fct_other(InfantDeaths$CAUSE_OF_DEATH_CODE_0, keep = 'Epilepsy', other_level = 'other')
+table(InfantDeaths$CAUSE_OF_DEATH_CODE_0)
+
+unique(InfantDeaths$CAUSE_OF_DEATH_CODE_1)
+table(InfantDeaths$CAUSE_OF_DEATH_CODE_1)
+is.factor(InfantDeaths$CAUSE_OF_DEATH_CODE_1)
+InfantDeaths$CAUSE_OF_DEATH_CODE_1 <- as.factor(InfantDeaths$CAUSE_OF_DEATH_CODE_1)
+levels(InfantDeaths$CAUSE_OF_DEATH_CODE_1)
+InfantDeaths$CAUSE_OF_DEATH_CODE_1 <- fct_collapse(InfantDeaths$CAUSE_OF_DEATH_CODE_1, Epilepsy = c("3453", "3459", "G401", "G402", "G403", "G404", "G405", "G408", "G409", "G419"))
+InfantDeaths$CAUSE_OF_DEATH_CODE_1 <- fct_other(InfantDeaths$CAUSE_OF_DEATH_CODE_1, keep = 'Epilepsy', other_level = 'other')
+table(InfantDeaths$CAUSE_OF_DEATH_CODE_1)
+
+unique(InfantDeaths$CAUSE_OF_DEATH_CODE_2)
+table(InfantDeaths$CAUSE_OF_DEATH_CODE_2)
+is.factor(InfantDeaths$CAUSE_OF_DEATH_CODE_2)
+InfantDeaths$CAUSE_OF_DEATH_CODE_2 <- as.factor(InfantDeaths$CAUSE_OF_DEATH_CODE_2)
+levels(InfantDeaths$CAUSE_OF_DEATH_CODE_2)
+InfantDeaths$CAUSE_OF_DEATH_CODE_2 <- fct_collapse(InfantDeaths$CAUSE_OF_DEATH_CODE_2, Epilepsy = c("3453", "3459", "G401", "G402", "G403", "G404", "G405", "G408", "G409", "G419"))
+InfantDeaths$CAUSE_OF_DEATH_CODE_2 <- fct_other(InfantDeaths$CAUSE_OF_DEATH_CODE_2, keep = 'Epilepsy', other_level = 'other')
+table(InfantDeaths$CAUSE_OF_DEATH_CODE_2)
+
+unique(InfantDeaths$CAUSE_OF_DEATH_CODE_3)
+table(InfantDeaths$CAUSE_OF_DEATH_CODE_3)
+is.factor(InfantDeaths$CAUSE_OF_DEATH_CODE_3)
+InfantDeaths$CAUSE_OF_DEATH_CODE_3 <- as.factor(InfantDeaths$CAUSE_OF_DEATH_CODE_3)
+levels(InfantDeaths$CAUSE_OF_DEATH_CODE_3)
+InfantDeaths$CAUSE_OF_DEATH_CODE_3 <- fct_collapse(InfantDeaths$CAUSE_OF_DEATH_CODE_3, Epilepsy = c("3453", "3459", "G401", "G402", "G403", "G404", "G405", "G408", "G409", "G419"))
+InfantDeaths$CAUSE_OF_DEATH_CODE_3 <- fct_other(InfantDeaths$CAUSE_OF_DEATH_CODE_3, keep = 'Epilepsy', other_level = 'other')
+table(InfantDeaths$CAUSE_OF_DEATH_CODE_3)
+
+unique(InfantDeaths$CAUSE_OF_DEATH_CODE_4)
+table(InfantDeaths$CAUSE_OF_DEATH_CODE_4)
+is.factor(InfantDeaths$CAUSE_OF_DEATH_CODE_4)
+InfantDeaths$CAUSE_OF_DEATH_CODE_4 <- as.factor(InfantDeaths$CAUSE_OF_DEATH_CODE_4)
+levels(InfantDeaths$CAUSE_OF_DEATH_CODE_4)
+InfantDeaths$CAUSE_OF_DEATH_CODE_4 <- fct_collapse(InfantDeaths$CAUSE_OF_DEATH_CODE_4, Epilepsy = c("3453", "3459", "G401", "G402", "G403", "G404", "G405", "G408", "G409", "G419"))
+InfantDeaths$CAUSE_OF_DEATH_CODE_4 <- fct_other(InfantDeaths$CAUSE_OF_DEATH_CODE_4, keep = 'Epilepsy', other_level = 'other')
+table(InfantDeaths$CAUSE_OF_DEATH_CODE_4)
+
+unique(InfantDeaths$CAUSE_OF_DEATH_CODE_5)
+table(InfantDeaths$CAUSE_OF_DEATH_CODE_5)
+is.factor(InfantDeaths$CAUSE_OF_DEATH_CODE_5)
+InfantDeaths$CAUSE_OF_DEATH_CODE_5 <- as.factor(InfantDeaths$CAUSE_OF_DEATH_CODE_5)
+levels(InfantDeaths$CAUSE_OF_DEATH_CODE_5)
+InfantDeaths$CAUSE_OF_DEATH_CODE_5 <- fct_collapse(InfantDeaths$CAUSE_OF_DEATH_CODE_5, Epilepsy = c("3453", "3459", "G401", "G402", "G403", "G404", "G405", "G408", "G409", "G419"))
+InfantDeaths$CAUSE_OF_DEATH_CODE_5 <- fct_other(InfantDeaths$CAUSE_OF_DEATH_CODE_5, keep = 'Epilepsy', other_level = 'other')
+table(InfantDeaths$CAUSE_OF_DEATH_CODE_5)
+
+unique(InfantDeaths$CAUSE_OF_DEATH_CODE_6)
+table(InfantDeaths$CAUSE_OF_DEATH_CODE_6)
+is.factor(InfantDeaths$CAUSE_OF_DEATH_CODE_6)
+InfantDeaths$CAUSE_OF_DEATH_CODE_6 <- as.factor(InfantDeaths$CAUSE_OF_DEATH_CODE_6)
+levels(InfantDeaths$CAUSE_OF_DEATH_CODE_6)
+InfantDeaths$CAUSE_OF_DEATH_CODE_6 <- fct_collapse(InfantDeaths$CAUSE_OF_DEATH_CODE_6, Epilepsy = c("3453", "3459", "G401", "G402", "G403", "G404", "G405", "G408", "G409", "G419"))
+InfantDeaths$CAUSE_OF_DEATH_CODE_6 <- fct_other(InfantDeaths$CAUSE_OF_DEATH_CODE_6, keep = 'Epilepsy', other_level = 'other')
+table(InfantDeaths$CAUSE_OF_DEATH_CODE_6)
+
+unique(InfantDeaths$CAUSE_OF_DEATH_CODE_7)
+table(InfantDeaths$CAUSE_OF_DEATH_CODE_7)
+is.factor(InfantDeaths$CAUSE_OF_DEATH_CODE_7)
+InfantDeaths$CAUSE_OF_DEATH_CODE_7 <- as.factor(InfantDeaths$CAUSE_OF_DEATH_CODE_7)
+levels(InfantDeaths$CAUSE_OF_DEATH_CODE_7)
+InfantDeaths$CAUSE_OF_DEATH_CODE_7 <- fct_collapse(InfantDeaths$CAUSE_OF_DEATH_CODE_7, Epilepsy = c("3453", "3459", "G401", "G402", "G403", "G404", "G405", "G408", "G409", "G419"))
+InfantDeaths$CAUSE_OF_DEATH_CODE_7 <- fct_other(InfantDeaths$CAUSE_OF_DEATH_CODE_7, keep = 'Epilepsy', other_level = 'other')
+table(InfantDeaths$CAUSE_OF_DEATH_CODE_7)
+
+unique(InfantDeaths$CAUSE_OF_DEATH_CODE_8)
+table(InfantDeaths$CAUSE_OF_DEATH_CODE_8)
+is.factor(InfantDeaths$CAUSE_OF_DEATH_CODE_8)
+InfantDeaths$CAUSE_OF_DEATH_CODE_8 <- as.factor(InfantDeaths$CAUSE_OF_DEATH_CODE_8)
+levels(InfantDeaths$CAUSE_OF_DEATH_CODE_8)
+InfantDeaths$CAUSE_OF_DEATH_CODE_8 <- fct_collapse(InfantDeaths$CAUSE_OF_DEATH_CODE_8, Epilepsy = c("3453", "3459", "G401", "G402", "G403", "G404", "G405", "G408", "G409", "G419"))
+InfantDeaths$CAUSE_OF_DEATH_CODE_8 <- fct_other(InfantDeaths$CAUSE_OF_DEATH_CODE_8, keep = 'Epilepsy', other_level = 'other')
+table(InfantDeaths$CAUSE_OF_DEATH_CODE_8)
+
+unique(InfantDeaths$CAUSE_OF_DEATH_CODE_9)
+is.factor(InfantDeaths$CAUSE_OF_DEATH_CODE_9)
+InfantDeaths$CAUSE_OF_DEATH_CODE_9 <- as.factor(InfantDeaths$CAUSE_OF_DEATH_CODE_9)
+levels(InfantDeaths$CAUSE_OF_DEATH_CODE_9)
+InfantDeaths$CAUSE_OF_DEATH_CODE_9 <- fct_collapse(InfantDeaths$CAUSE_OF_DEATH_CODE_9, Epilepsy = c("3453", "3459", "G401", "G402", "G403", "G404", "G405", "G408", "G409", "G419"))
+InfantDeaths$CAUSE_OF_DEATH_CODE_9 <- fct_other(InfantDeaths$CAUSE_OF_DEATH_CODE_9, keep = 'Epilepsy', other_level = 'other')
+table(InfantDeaths$CAUSE_OF_DEATH_CODE_9)
+
+
+##inspect and age at death variable
+unique(InfantDeaths$AGE_LESS_THAN_2_YRS)
+table(InfantDeaths$AGE_LESS_THAN_2_YRS)
+unique(InfantDeaths$AGE_UNITS)
+table(InfantDeaths$AGE_UNITS)
+
+InfantDeaths <- InfantDeaths %>%
+  mutate(InfantDeaths = case_when(UNDERLYING_CAUSE_OF_DEATH == "Epilepsy" ~ "InfantDeath",
+                                  UNDERLYING_CAUSE_OF_DEATH =="other" ~ "InfantDeath",
+                                  CAUSE_OF_DEATH_CODE_0 == "Epilepsy" ~ "InfantDeath",
+                                  CAUSE_OF_DEATH_CODE_0 == "other" ~ "InfantDeath",
+                                  CAUSE_OF_DEATH_CODE_1 == "Epilepsy" ~ "InfantDeath",
+                                  CAUSE_OF_DEATH_CODE_1 == "other" ~ "InfantDeath",
+                                  CAUSE_OF_DEATH_CODE_2 == "Epilepsy" ~ "InfantDeath",
+                                  CAUSE_OF_DEATH_CODE_2 == "other" ~ "InfantDeath",
+                                  CAUSE_OF_DEATH_CODE_3 == "Epilepsy" ~ "InfantDeath",
+                                  CAUSE_OF_DEATH_CODE_3 == "other" ~ "InfantDeath",
+                                  CAUSE_OF_DEATH_CODE_4 == "Epilepsy" ~ "InfantDeath",
+                                  CAUSE_OF_DEATH_CODE_4 == "other" ~ "InfantDeath",
+                                  CAUSE_OF_DEATH_CODE_5 == "Epilepsy" ~ "InfantDeath",
+                                  CAUSE_OF_DEATH_CODE_5 == "other" ~ "InfantDeath",
+                                  CAUSE_OF_DEATH_CODE_6 == "Epilepsy" ~ "InfantDeath",
+                                  CAUSE_OF_DEATH_CODE_6 == "other" ~ "InfantDeath",
+                                  CAUSE_OF_DEATH_CODE_7 == "Epilepsy" ~ "InfantDeath",
+                                  CAUSE_OF_DEATH_CODE_7 == "other" ~ "InfantDeath",
+                                  CAUSE_OF_DEATH_CODE_8 == "Epilepsy" ~ "InfantDeath",
+                                  CAUSE_OF_DEATH_CODE_8 == "other" ~ "InfantDeath",
+                                  CAUSE_OF_DEATH_CODE_9 == "Epilepsy" ~ "InfantDeath",
+                                  CAUSE_OF_DEATH_CODE_9 == "other" ~ "InfantDeath",
+                                  TRUE ~ "No_InfantDeath"))
+
+InfantDeaths$InfantDeaths <- fct_other(InfantDeaths$InfantDeaths, keep = 'InfantDeath', other_level = 'No_InfantDeath')
+
+InfantDeaths2 <- subset(InfantDeaths, select = c("child_id", "InfantDeaths"))
+table(InfantDeaths2$InfantDeaths)
+levels(InfantDeaths2$InfantDeaths)
+
+InfantDeaths2 <- InfantDeaths2 %>%
+  distinct(child_id, .keep_all = TRUE)
+
