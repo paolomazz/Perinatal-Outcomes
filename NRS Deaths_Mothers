@@ -1,0 +1,187 @@
+##Load in NRS_Deaths_Mothers##
+
+
+DeathsMothers <- NRS_Deaths_Mothers
+
+##inspect and relabel deaths cause by epilepsy or other
+unique(DeathsMothers$UNDERLYING_CAUSE_OF_DEATH)
+table(DeathsMothers$UNDERLYING_CAUSE_OF_DEATH)
+is.factor(DeathsMothers$UNDERLYING_CAUSE_OF_DEATH)
+DeathsMothers$UNDERLYING_CAUSE_OF_DEATH <- as.factor(DeathsMothers$UNDERLYING_CAUSE_OF_DEATH)
+levels(DeathsMothers$UNDERLYING_CAUSE_OF_DEATH)
+DeathsMothers$UNDERLYING_CAUSE_OF_DEATH <- fct_collapse(DeathsMothers$UNDERLYING_CAUSE_OF_DEATH, Epilepsy = c("3453", "3459", "G401", "G402", "G403", "G404", "G405", "G408", "G409", "G419"))
+DeathsMothers$UNDERLYING_CAUSE_OF_DEATH <- fct_other(DeathsMothers$UNDERLYING_CAUSE_OF_DEATH, keep = 'Epilepsy', other_level = 'other')
+table(DeathsMothers$UNDERLYING_CAUSE_OF_DEATH)
+
+## potential alternative code DeathsMothers$UNDERLYING_CAUSE_OF_DEATH_TEST <- ifelse(is.na(DeathsMothers$UNDERLYING_CAUSE_OF_DEATH), "No_MaternalDeath", "MaternalDeath")##
+
+
+
+
+unique(DeathsMothers$CAUSE_OF_DEATH_CODE_0)
+table(DeathsMothers$CAUSE_OF_DEATH_CODE_0)
+is.factor(DeathsMothers$CAUSE_OF_DEATH_CODE_0)
+DeathsMothers$CAUSE_OF_DEATH_CODE_0 <- as.factor(DeathsMothers$CAUSE_OF_DEATH_CODE_0)
+levels(DeathsMothers$CAUSE_OF_DEATH_CODE_0)
+DeathsMothers$CAUSE_OF_DEATH_CODE_0 <- fct_collapse(DeathsMothers$CAUSE_OF_DEATH_CODE_0, Epilepsy = c("3453", "3459", "G401", "G402", "G403", "G404", "G405", "G408", "G409", "G419"))
+DeathsMothers$CAUSE_OF_DEATH_CODE_0 <- fct_other(DeathsMothers$CAUSE_OF_DEATH_CODE_0, keep = 'Epilepsy', other_level = 'other')
+table(DeathsMothers$CAUSE_OF_DEATH_CODE_0)
+
+unique(DeathsMothers$CAUSE_OF_DEATH_CODE_1)
+table(DeathsMothers$CAUSE_OF_DEATH_CODE_1)
+is.factor(DeathsMothers$CAUSE_OF_DEATH_CODE_1)
+DeathsMothers$CAUSE_OF_DEATH_CODE_1 <- as.factor(DeathsMothers$CAUSE_OF_DEATH_CODE_1)
+levels(DeathsMothers$CAUSE_OF_DEATH_CODE_1)
+DeathsMothers$CAUSE_OF_DEATH_CODE_1 <- fct_collapse(DeathsMothers$CAUSE_OF_DEATH_CODE_1, Epilepsy = c("3453", "3459", "G401", "G402", "G403", "G404", "G405", "G408", "G409", "G419"))
+DeathsMothers$CAUSE_OF_DEATH_CODE_1 <- fct_other(DeathsMothers$CAUSE_OF_DEATH_CODE_1, keep = 'Epilepsy', other_level = 'other')
+table(DeathsMothers$CAUSE_OF_DEATH_CODE_1)
+
+unique(DeathsMothers$CAUSE_OF_DEATH_CODE_2)
+table(DeathsMothers$CAUSE_OF_DEATH_CODE_2)
+is.factor(DeathsMothers$CAUSE_OF_DEATH_CODE_2)
+DeathsMothers$CAUSE_OF_DEATH_CODE_2 <- as.factor(DeathsMothers$CAUSE_OF_DEATH_CODE_2)
+levels(DeathsMothers$CAUSE_OF_DEATH_CODE_2)
+DeathsMothers$CAUSE_OF_DEATH_CODE_2 <- fct_collapse(DeathsMothers$CAUSE_OF_DEATH_CODE_2, Epilepsy = c("3453", "3459", "G401", "G402", "G403", "G404", "G405", "G408", "G409", "G419"))
+DeathsMothers$CAUSE_OF_DEATH_CODE_2 <- fct_other(DeathsMothers$CAUSE_OF_DEATH_CODE_2, keep = 'Epilepsy', other_level = 'other')
+table(DeathsMothers$CAUSE_OF_DEATH_CODE_2)
+
+unique(DeathsMothers$CAUSE_OF_DEATH_CODE_3)
+table(DeathsMothers$CAUSE_OF_DEATH_CODE_3)
+is.factor(DeathsMothers$CAUSE_OF_DEATH_CODE_3)
+DeathsMothers$CAUSE_OF_DEATH_CODE_3 <- as.factor(DeathsMothers$CAUSE_OF_DEATH_CODE_3)
+levels(DeathsMothers$CAUSE_OF_DEATH_CODE_3)
+DeathsMothers$CAUSE_OF_DEATH_CODE_3 <- fct_collapse(DeathsMothers$CAUSE_OF_DEATH_CODE_3, Epilepsy = c("3453", "3459", "G401", "G402", "G403", "G404", "G405", "G408", "G409", "G419"))
+DeathsMothers$CAUSE_OF_DEATH_CODE_3 <- fct_other(DeathsMothers$CAUSE_OF_DEATH_CODE_3, keep = 'Epilepsy', other_level = 'other')
+table(DeathsMothers$CAUSE_OF_DEATH_CODE_3)
+
+unique(DeathsMothers$CAUSE_OF_DEATH_CODE_4)
+table(DeathsMothers$CAUSE_OF_DEATH_CODE_4)
+is.factor(DeathsMothers$CAUSE_OF_DEATH_CODE_4)
+DeathsMothers$CAUSE_OF_DEATH_CODE_4 <- as.factor(DeathsMothers$CAUSE_OF_DEATH_CODE_4)
+levels(DeathsMothers$CAUSE_OF_DEATH_CODE_4)
+DeathsMothers$CAUSE_OF_DEATH_CODE_4 <- fct_collapse(DeathsMothers$CAUSE_OF_DEATH_CODE_4, Epilepsy = c("3453", "3459", "G401", "G402", "G403", "G404", "G405", "G408", "G409", "G419"))
+DeathsMothers$CAUSE_OF_DEATH_CODE_4 <- fct_other(DeathsMothers$CAUSE_OF_DEATH_CODE_4, keep = 'Epilepsy', other_level = 'other')
+table(DeathsMothers$CAUSE_OF_DEATH_CODE_4)
+
+unique(DeathsMothers$CAUSE_OF_DEATH_CODE_5)
+table(DeathsMothers$CAUSE_OF_DEATH_CODE_5)
+is.factor(DeathsMothers$CAUSE_OF_DEATH_CODE_5)
+DeathsMothers$CAUSE_OF_DEATH_CODE_5 <- as.factor(DeathsMothers$CAUSE_OF_DEATH_CODE_5)
+levels(DeathsMothers$CAUSE_OF_DEATH_CODE_5)
+DeathsMothers$CAUSE_OF_DEATH_CODE_5 <- fct_collapse(DeathsMothers$CAUSE_OF_DEATH_CODE_5, Epilepsy = c("3453", "3459", "G401", "G402", "G403", "G404", "G405", "G408", "G409", "G419"))
+DeathsMothers$CAUSE_OF_DEATH_CODE_5 <- fct_other(DeathsMothers$CAUSE_OF_DEATH_CODE_5, keep = 'Epilepsy', other_level = 'other')
+table(DeathsMothers$CAUSE_OF_DEATH_CODE_5)
+
+unique(DeathsMothers$CAUSE_OF_DEATH_CODE_6)
+table(DeathsMothers$CAUSE_OF_DEATH_CODE_6)
+is.factor(DeathsMothers$CAUSE_OF_DEATH_CODE_6)
+DeathsMothers$CAUSE_OF_DEATH_CODE_6 <- as.factor(DeathsMothers$CAUSE_OF_DEATH_CODE_6)
+levels(DeathsMothers$CAUSE_OF_DEATH_CODE_6)
+DeathsMothers$CAUSE_OF_DEATH_CODE_6 <- fct_collapse(DeathsMothers$CAUSE_OF_DEATH_CODE_6, Epilepsy = c("3453", "3459", "G401", "G402", "G403", "G404", "G405", "G408", "G409", "G419"))
+DeathsMothers$CAUSE_OF_DEATH_CODE_6 <- fct_other(DeathsMothers$CAUSE_OF_DEATH_CODE_6, keep = 'Epilepsy', other_level = 'other')
+table(DeathsMothers$CAUSE_OF_DEATH_CODE_6)
+
+unique(DeathsMothers$CAUSE_OF_DEATH_CODE_7)
+table(DeathsMothers$CAUSE_OF_DEATH_CODE_7)
+is.factor(DeathsMothers$CAUSE_OF_DEATH_CODE_7)
+DeathsMothers$CAUSE_OF_DEATH_CODE_7 <- as.factor(DeathsMothers$CAUSE_OF_DEATH_CODE_7)
+levels(DeathsMothers$CAUSE_OF_DEATH_CODE_7)
+DeathsMothers$CAUSE_OF_DEATH_CODE_7 <- fct_collapse(DeathsMothers$CAUSE_OF_DEATH_CODE_7, Epilepsy = c("3453", "3459", "G401", "G402", "G403", "G404", "G405", "G408", "G409", "G419"))
+DeathsMothers$CAUSE_OF_DEATH_CODE_7 <- fct_other(DeathsMothers$CAUSE_OF_DEATH_CODE_7, keep = 'Epilepsy', other_level = 'other')
+table(DeathsMothers$CAUSE_OF_DEATH_CODE_7)
+
+unique(DeathsMothers$CAUSE_OF_DEATH_CODE_8)
+table(DeathsMothers$CAUSE_OF_DEATH_CODE_8)
+is.factor(DeathsMothers$CAUSE_OF_DEATH_CODE_8)
+DeathsMothers$CAUSE_OF_DEATH_CODE_8 <- as.factor(DeathsMothers$CAUSE_OF_DEATH_CODE_8)
+levels(DeathsMothers$CAUSE_OF_DEATH_CODE_8)
+DeathsMothers$CAUSE_OF_DEATH_CODE_8 <- fct_collapse(DeathsMothers$CAUSE_OF_DEATH_CODE_8, Epilepsy = c("3453", "3459", "G401", "G402", "G403", "G404", "G405", "G408", "G409", "G419"))
+DeathsMothers$CAUSE_OF_DEATH_CODE_8 <- fct_other(DeathsMothers$CAUSE_OF_DEATH_CODE_8, keep = 'Epilepsy', other_level = 'other')
+table(DeathsMothers$CAUSE_OF_DEATH_CODE_8)
+
+unique(DeathsMothers$CAUSE_OF_DEATH_CODE_9)
+is.factor(DeathsMothers$CAUSE_OF_DEATH_CODE_9)
+DeathsMothers$CAUSE_OF_DEATH_CODE_9 <- as.factor(DeathsMothers$CAUSE_OF_DEATH_CODE_9)
+levels(DeathsMothers$CAUSE_OF_DEATH_CODE_9)
+DeathsMothers$CAUSE_OF_DEATH_CODE_9 <- fct_collapse(DeathsMothers$CAUSE_OF_DEATH_CODE_9, Epilepsy = c("3453", "3459", "G401", "G402", "G403", "G404", "G405", "G408", "G409", "G419"))
+DeathsMothers$CAUSE_OF_DEATH_CODE_9 <- fct_other(DeathsMothers$CAUSE_OF_DEATH_CODE_9, keep = 'Epilepsy', other_level = 'other')
+table(DeathsMothers$CAUSE_OF_DEATH_CODE_9)
+
+DeathsMothers <- DeathsMothers %>% mutate(EpilepsyDeaths = case_when(UNDERLYING_CAUSE_OF_DEATH == "Epilepsy" ~ "Epilepsy", CAUSE_OF_DEATH_CODE_1 == "Epilepsy" ~ "Epilepsy", CAUSE_OF_DEATH_CODE_2 == "Epilepsy" ~ "Epilepsy", CAUSE_OF_DEATH_CODE_3 == "Epilepsy" ~ "Epilepsy", CAUSE_OF_DEATH_CODE_4 == "Epilepsy" ~ "Epilepsy", CAUSE_OF_DEATH_CODE_5 == "Epilepsy" ~ "Epilepsy", CAUSE_OF_DEATH_CODE_6 == "Epilepsy" ~ "Epilepsy", CAUSE_OF_DEATH_CODE_7 == "Epilepsy" ~ "Epilepsy", CAUSE_OF_DEATH_CODE_8 == "Epilepsy" ~ "Epilepsy", CAUSE_OF_DEATH_CODE_9 == "Epilepsy" ~ "Epilepsy", TRUE ~ "No_Epilepsy"))
+DeathsMothers$EpilepsyDeaths <- fct_other(DeathsMothers$EpilepsyDeaths, keep = 'Epilepsy', other_level = 'No_Epilepsy')
+
+table(DeathsMothers$EpilepsyDeaths)
+
+##set date of death as date variable
+DeathsMothers$DeathDate <- DeathsMothers$DATE_OF_DEATH
+DeathsMothers$DeathDate <- as.numeric(paste0(DeathsMothers$DeathDate, "01"))
+transform(DeathsMothers, DeathDate=as.Date(as.character(DeathDate), "%Y%m%d"))
+DeathsMothers$DeathDate <- ymd(DeathsMothers$DeathDate)
+
+DeathsMothersdatecheck <-DeathsMothers
+DeathsMothersdatecheck <- subset(DeathsMothersdatecheck, select=c("mother_id", "DATE_OF_DEATH", "DeathDate"))
+
+SMR02_DeathsMothers <- left_join(SMR02test, DeathsMothers, by = "mother_id", keep = FALSE, multiple = "first", unmatched = "drop", relationship = "many-to-one")
+
+##create new maternal death variable for any deaths, not just epilepsy no epilpesy underlying cause
+SMR02_DeathsMothers <- SMR02_DeathsMothers %>%
+  mutate(MaternalDeaths = case_when(UNDERLYING_CAUSE_OF_DEATH == "Epilepsy" ~ "MaternalDeath",
+                                    UNDERLYING_CAUSE_OF_DEATH =="other" ~ "MaternalDeath",
+                                    CAUSE_OF_DEATH_CODE_0 == "Epilepsy" ~ "MaternalDeath",
+                                    CAUSE_OF_DEATH_CODE_0 == "other" ~ "MaternalDeath",
+                                    CAUSE_OF_DEATH_CODE_1 == "Epilepsy" ~ "MaternalDeath",
+                                    CAUSE_OF_DEATH_CODE_1 == "other" ~ "MaternalDeath",
+                                    CAUSE_OF_DEATH_CODE_2 == "Epilepsy" ~ "MaternalDeath",
+                                    CAUSE_OF_DEATH_CODE_2 == "other" ~ "MaternalDeath",
+                                    CAUSE_OF_DEATH_CODE_3 == "Epilepsy" ~ "MaternalDeath",
+                                    CAUSE_OF_DEATH_CODE_3 == "other" ~ "MaternalDeath",
+                                    CAUSE_OF_DEATH_CODE_4 == "Epilepsy" ~ "MaternalDeath",
+                                    CAUSE_OF_DEATH_CODE_4 == "other" ~ "MaternalDeath",
+                                    CAUSE_OF_DEATH_CODE_5 == "Epilepsy" ~ "MaternalDeath",
+                                    CAUSE_OF_DEATH_CODE_5 == "other" ~ "MaternalDeath",
+                                    CAUSE_OF_DEATH_CODE_6 == "Epilepsy" ~ "MaternalDeath",
+                                    CAUSE_OF_DEATH_CODE_6 == "other" ~ "MaternalDeath",
+                                    CAUSE_OF_DEATH_CODE_7 == "Epilepsy" ~ "MaternalDeath",
+                                    CAUSE_OF_DEATH_CODE_7 == "other" ~ "MaternalDeath",
+                                    CAUSE_OF_DEATH_CODE_8 == "Epilepsy" ~ "MaternalDeath",
+                                    CAUSE_OF_DEATH_CODE_8 == "other" ~ "MaternalDeath",
+                                    CAUSE_OF_DEATH_CODE_9 == "Epilepsy" ~ "MaternalDeath",
+                                    CAUSE_OF_DEATH_CODE_9 == "other" ~ "MaternalDeath",
+                                    MaternalDeath == "MatDeath" ~ "MaternalDeath",
+                                    EpilepsyDeaths == "Epilepsy" ~ "MaternalDeath",
+                                    EpilepsyDeaths == "No_Epilepsy" ~ "MaternalDeath",
+                                    TRUE ~ "No_MaternalDeath"))
+
+SMR02_DeathsMothers$MaternalDeaths <- fct_other(SMR02_DeathsMothers$MaternalDeaths, keep = 'MaternalDeath', other_level = 'No_MaternalDeath')
+table(SMR02_DeathsMothers$MaternalDeaths, SMR02_DeathsMothers$EpilepsyCases)
+
+##create var for maternal death during or shortly after pregnancy
+##set date of death as date variable
+
+SMR02_DeathsMothers$ADMISSION_DATE <- as.numeric(paste0(SMR02_DeathsMothers$ADMISSION_DATE, "01"))
+transform(SMR02_DeathsMothers, ADMISSION_DATE=as.Date(as.character(ADMISSION_DATE), "%Y%m%d"))
+SMR02_DeathsMothers$ADMISSION_DATE <- ymd(SMR02_DeathsMothers$ADMISSION_DATE)
+
+SMR02_DeathsMothers_check <- subset(SMR02_DeathsMothers, select=c("mother_id", "ADMISSION_DATE", "DeathDate", "MaternalDeaths"))
+
+
+SMR02_DeathsMothers$Postnatal_Death <- SMR02_DeathsMothers$ADMISSION_DATE+365
+
+
+##identify PERINATAL DEATHS
+comparison2 <- function(x, y, z) {
+  case_when(is.na(z) ~ NA_character_,
+            z >= x & z <= y |
+              y == z |
+              x == z ~ 'perinataldeath',
+            TRUE ~ 'no_perinataldeath')
+}
+
+SMR02_DeathsMothers <- SMR02_DeathsMothers %>%
+  mutate(PerinatalDeaths = comparison2(ADMISSION_DATE, Postnatal_Death, DeathDate))
+SMR02_DeathsMothers$PerinatalDeaths <- as.factor(SMR02_DeathsMothers$PerinatalDeaths)
+
+SMR02_DeathsMothers$PerinatalDeaths <- fct_collapse(SMR02_DeathsMothers$PerinatalDeaths, Yes = c("perinataldeath"), No = c("no_perinataldeath"))
+SMR02_DeathsMothers$PerinatalDeaths[is.na(SMR02_DeathsMothers$PerinatalDeaths)] <- "no_perinataldeath"
+
+table(SMR02_DeathsMothers$EpilepsyCases, SMR02_DeathsMothers$PerinatalDeaths)
