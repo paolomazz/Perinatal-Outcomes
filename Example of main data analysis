@@ -1,0 +1,62 @@
+##These models are examples of the unadjusted and adjusted analyses, using preterm birth as an example. For cohorts one and two, the only changes are the datasets they use.
+
+Cohort one (1992-2008), WWE vs WWoE
+
+##Run the unadjusted model for Preterm Birth
+CCml_Preterm1 <- glmer(PretermBirth ~ EpilepsyCases2 + (1 | mother_id), data = RO1d1, family = binomial(link = "logit"), na.action = na.omit, control = glmerControl(optimizer = "bobyqa"), nAGQ = 0)
+
+##Now obtain odds ratios for the above model
+parameters::model_parameters(CCml_Preterm1, exp = TRUE, ci_method="wald")
+
+##Now get the model diagnostic, e.g. AIC, PseudoR2, and ICC.
+summary(CCml_Preterm1)
+r.squaredGLMM(CCml_Preterm1)
+mlmhelpr::mlmhelpr::icc(CCml_Preterm1)
+
+
+##Run the adjusted model for Preterm Birth and get model diagnostics above, plus VIF
+CCml_Preterm <- glmer(PretermBirth ~ EpilepsyCases2 + Maternal_Age + PARITY + PREVIOUS_CEASAREAN_SECTIONS + SEX_BABY_1 + SIMD + PHD + Pre_Diabetes + (1 | mother_id), data = RO1d1, family = binomial(link = "logit"), na.action = na.omit, control = glmerControl(optimizer = "bobyqa"), nAGQ = 0)
+summary(CCml_Preterm)
+parameters::model_parameters(CCml_Preterm, exp = TRUE, ci_method="wald")
+mlmhelpr::icc(CCml_Preterm)
+r.squaredGLMM(CCml_Preterm)
+check_collinearity(CCml_Preterm)
+
+
+
+Cohort two (2009-2021), including WWE vs WWoE and ASM+ vs ASM-
+
+CCml_Preterm1 <- glmer(PretermBirth ~ EpilepsyCases2 + (1 | mother_id), data = RO1PIS2, family = binomial(link = "logit"), na.action = na.omit, control = glmerControl(optimizer = "bobyqa"), nAGQ = 0)
+parameters::model_parameters(CCml_Preterm1, exp = TRUE, ci_method="wald")
+summary(CCml_Preterm1)
+r.squaredGLMM(CCml_Preterm1)
+mlmhelpr::icc(CCml_Preterm1)
+
+
+CCml_Preterm2 <- glmer(PretermBirth ~ EpilepsyCases2 + Maternal_Age + PARITY + PREVIOUS_CEASAREAN_SECTIONS + SEX_BABY_1 + SIMD + (1 | mother_id), data = RO1PIS2, family = binomial(link = "logit"), na.action = na.omit, control = glmerControl(optimizer = "bobyqa"), nAGQ = 0)
+parameters::model_parameters(CCml_Preterm2, exp = TRUE, ci_method="wald")
+summary(CCml_Preterm2)
+r.squaredGLMM(CCml_Preterm2)
+check_collinearity(CCml_Preterm2)
+mlmhelpr::icc(CCml_Preterm2)
+
+
+CCml_Preterm3 <- glmer(PretermBirth ~ EpilepsyCases2 + Maternal_Age + PARITY + PREVIOUS_CEASAREAN_SECTIONS + SEX_BABY_1 + SIMD + AnyAsm1 + (1 | mother_id), data = RO1PIS2, family = binomial(link = "logit"), na.action = na.omit, control = glmerControl(optimizer = "bobyqa"), nAGQ = 0)
+parameters::model_parameters(CCml_Preterm3, exp = TRUE, ci_method="wald")
+summary(CCml_Preterm3)
+r.squaredGLMM(CCml_Preterm3)
+check_collinearity(CCml_Preterm3)
+mlmhelpr::icc(CCml_Preterm3)
+
+
+CCml_Preterm4 <- glmer(PretermBirth ~ EpilepsyCases2 + Maternal_Age + BodyMassIndex5 + PARITY + PREVIOUS_CEASAREAN_SECTIONS + SEX_BABY_1 + SIMD + AnyAsm4 + PHD + Pre_Diabetes + DRUG_MISUSE + SMOKER_DURING_PREGNANCY + (1 | mother_id), data = RO1PIS2, family = binomial(link = "logit"), na.action = na.omit, control = glmerControl(optimizer = "bobyqa"), nAGQ = 0)
+parameters::model_parameters(CCml_Preterm4, exp = TRUE, ci_method="wald")
+summary(CCml_Preterm4)
+r.squaredGLMM(CCml_Preterm4)
+check_collinearity(CCml_Preterm4)
+mlmhelpr::icc(CCml_Preterm4)
+vif(CCml_Preterm4)
+
+
+
+##Investigating the total population on any ASM and those exposed to individual ASM monotherapies  just requires using the individual variables names instead of Epilepsy Cases as the exposure.
