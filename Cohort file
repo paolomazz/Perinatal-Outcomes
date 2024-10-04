@@ -1,0 +1,11 @@
+##Load in the Mother_Baby_Cohort file to link neonates to their mothers##
+
+Cohort <- Mother_Baby_Cohort
+
+##Assign date of birth as a date variable
+Cohort$date_of_birth <- as.numeric(paste0(Cohort$date_of_birth, "01"))
+transform(Cohort, date_of_birth=as.Date(as.character(date_of_birth), "%Y%m%d"))
+Cohort$date_of_birth <- ymd(Cohort$date_of_birth)
+
+Cohort$DeliveryDate <- Cohort$date_of_birth
+Cohort2 <- subset(Cohort, select = c("mother_id", "child_id", "DeliveryDate"))
