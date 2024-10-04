@@ -1,0 +1,115 @@
+##Create Trend lines for ASM dispensation across cohort two and plot odds ratios for each outcome across cohorts one and two to compare WWE vs WwoE between the two
+
+
+##Here I present how to create the trend line for all ASMs, and I have used Topiramate monotherapy as an example of how I plotted this for each individual ASM.
+
+##create trend line for epilepsy cases across 1992-2021
+RO1PIS23 <- RO1PIS2
+RO1PIS23 <- RO1PIS23 %>%
+  ungroup()
+RO1PIS23$Conception_year <- RO1PIS23$estimated_conception_date
+levels(RO1PIS23$Conception_year)
+is.Date(RO1PIS23$Conception_year)
+names(RO1PIS23)
+RO1PIS23 <- subset(RO1PIS23, select = c("mother_id", "PregnancyNumber", "Conception_year", "AnyAsm4", "EpilepsyCases2"))
+RO1PIS23 <- RO1PIS23 %>%
+  mutate(Conception_year2 = case_when(Conception_year >= ymd("2008-12-01") & Conception_year <= ymd("2009-12-31") ~ "2009",
+                                      Conception_year >= ymd("2010-01-01") & Conception_year <= ymd("2010-12-31") ~ "2010",
+                                      Conception_year >= ymd("2011-01-01") & Conception_year <= ymd("2011-12-31") ~ "2011",
+                                      Conception_year >= ymd("2012-01-01") & Conception_year <= ymd("2012-12-31") ~ "2012",
+                                      Conception_year >= ymd("2013-01-01") & Conception_year <= ymd("2013-12-31") ~ "2013",
+                                      Conception_year >= ymd("2014-01-01") & Conception_year <= ymd("2014-12-31") ~ "2014",
+                                      Conception_year >= ymd("2015-01-01") & Conception_year <= ymd("2015-12-31") ~ "2015",
+                                      Conception_year >= ymd("2016-01-01") & Conception_year <= ymd("2016-12-31") ~ "2016",
+                                      Conception_year >= ymd("2017-01-01") & Conception_year <= ymd("2017-12-31") ~ "2017",
+                                      Conception_year >= ymd("2018-01-01") & Conception_year <= ymd("2018-12-31") ~ "2018",
+                                      Conception_year >= ymd("2019-01-01") & Conception_year <= ymd("2019-12-31") ~ "2019",
+                                      Conception_year >= ymd("2020-01-01") & Conception_year <= ymd("2020-12-31") ~ "2020",
+                                      Conception_year >= ymd("2021-01-01") ~ "2021"))
+                                     
+
+RO1PIS23$ASM_Yes <- RO1PIS23$AnyAsm4=="Yes"
+RO1PIS23$ASM_Yes[RO1PIS23$ASM_Yes=="FALSE"] <- NA
+RO1PIS23 <- subset(RO1PIS23, select=c("ASM_Yes", "Conception_year2", "EpilepsyCases2"))
+
+Trend_ASM <- data.frame(table(RO1PIS23$ASM_Yes, RO1PIS23$EpilepsyCases2, RO1PIS23$Conception_year2))
+Trend_ASM$ASM_Yes <- Trend_ASM$Var1
+Trend_ASM$Epilepsy_Cases <- Trend_ASM$Var2
+Trend_ASM$Conception_Year <- Trend_ASM$Var3
+Trend_ASM$ASM_Frequency <- Trend_ASM$Freq
+Trend_ASM <- subset(Trend_ASM, select=c("ASM_Yes", "Epilepsy_Cases", "Conception_Year", "ASM_Frequency"))
+
+Trend_ASM <- subset(Trend_ASM, Trend_ASM$Conception_Year %in% c("2009", "2010", "2011", "2012",
+                                                                 "2013", "2014", "2015", "2016",
+                                                                 "2017", "2018", "2019", "2020"))
+
+Trend_ASM_by_Epilepsy <- ggplot(Trend_ASM, aes(x = Conception_Year, y = ASM_Frequency,
+                                               group = Epilepsy_Cases, color = Epilepsy_Cases)) + geom_line() +
+  scale_color_viridis(discrete = TRUE) +
+  ggtitle("Frequency of prenatal ASM dispensation in women with and without epilepsy") +
+  theme_ipsum() +
+  xlab("Year of conception") +
+  ylab("Frequency of prenatal ASM dispensation") +
+  geom_smooth(method=lm, formula = 'y ~ x', se=FALSE, fullrange = TRUE, color = "red", linewidth=0.2)
+
+Trend_ASM_by_Epilepsy
+
+##Now create a trend line for each ASM monotherapy
+RO1PIS23 <- RO1PIS2
+RO1PIS23 <- RO1PIS23 %>%
+  ungroup()
+RO1PIS23$Conception_year <- RO1PIS23$estimated_conception_date
+levels(RO1PIS23$Conception_year)
+is.Date(RO1PIS23$Conception_year)
+names(RO1PIS23)
+RO1PIS23 <- subset(RO1PIS23, select = c("mother_id", "PregnancyNumber", "Conception_year", "TPRmono1", "EpilepsyCases2"))
+RO1PIS23 <- RO1PIS23 %>%
+  mutate(Conception_year2 = case_when(Conception_year >= ymd("2008-12-01") & Conception_year <= ymd("2009-12-31") ~ "2009",
+                                      Conception_year >= ymd("2010-01-01") & Conception_year <= ymd("2010-12-31") ~ "2010",
+                                      Conception_year >= ymd("2011-01-01") & Conception_year <= ymd("2011-12-31") ~ "2011",
+                                      Conception_year >= ymd("2012-01-01") & Conception_year <= ymd("2012-12-31") ~ "2012",
+                                      Conception_year >= ymd("2013-01-01") & Conception_year <= ymd("2013-12-31") ~ "2013",
+                                      Conception_year >= ymd("2014-01-01") & Conception_year <= ymd("2014-12-31") ~ "2014",
+                                      Conception_year >= ymd("2015-01-01") & Conception_year <= ymd("2015-12-31") ~ "2015",
+                                      Conception_year >= ymd("2016-01-01") & Conception_year <= ymd("2016-12-31") ~ "2016",
+                                      Conception_year >= ymd("2017-01-01") & Conception_year <= ymd("2017-12-31") ~ "2017",
+                                      Conception_year >= ymd("2018-01-01") & Conception_year <= ymd("2018-12-31") ~ "2018",
+                                      Conception_year >= ymd("2019-01-01") & Conception_year <= ymd("2019-12-31") ~ "2019",
+                                      Conception_year >= ymd("2020-01-01") & Conception_year <= ymd("2020-12-31") ~ "2020",
+                                      Conception_year >= ymd("2021-01-01") ~ "2021"))
+
+table(RO1PIS23$TPRmono1)
+RO1PIS23$TPR_Yes <- RO1PIS23$TPRmono1=="TPRmono"
+RO1PIS23$TPR_Yes[RO1PIS23$TPR_Yes=="FALSE"] <- NA
+RO1PIS23 <- subset(RO1PIS23, select=c("TPR_Yes", "Conception_year2", "EpilepsyCases2"))
+
+Trend_TPR <- data.frame(table(RO1PIS23$TPR_Yes, RO1PIS23$EpilepsyCases2, RO1PIS23$Conception_year2))
+Trend_TPR$TPR_Yes <- Trend_TPR$Var1
+Trend_TPR$Epilepsy_Cases <- Trend_TPR$Var2
+Trend_TPR$Conception_Year <- Trend_TPR$Var3
+Trend_TPR$ASM_Frequency <- Trend_TPR$Freq
+Trend_TPR <- subset(Trend_TPR, select=c("TPR_Yes", "Epilepsy_Cases", "Conception_Year", "ASM_Frequency"))
+
+Trend_TPR <- subset(Trend_TPR, Trend_TPR$Conception_Year %in% c("2009", "2010", "2011", "2012",
+                                                                "2013", "2014", "2015", "2016",
+                                                                "2017", "2018", "2019", "2020"))
+
+Trend_TPR_by_Epilepsy <- ggplot(Trend_TPR, aes(x = Conception_Year, y = ASM_Frequency,
+                                               group = Epilepsy_Cases, color = Epilepsy_Cases)) + geom_line() +
+  scale_color_viridis(discrete = TRUE) +
+  ggtitle("Frequency of prenatal Topiramate monotherapy dispensation in women with and without epilepsy") +
+  theme_ipsum() +
+  xlab("Year of conception") +
+  ylab("Frequency of prenatal Topiramate monotherapy dispensation") +
+  geom_smooth(method=lm, formula = 'y ~ x', se=FALSE, fullrange = TRUE, color = "red", linewidth=0.2)
+
+Trend_TPR_by_Epilepsy
+
+
+ASM_Trends <- ggarrange(Trend_ASM_by_Epilepsy, Trend_TPR_by_Epilepsy,  rremove("x.text"),
+                        labels = c("Any ASM", "TPR monotherapy", "CBZ monotherapy", "LVT monotherapy",
+                                   "LMT monotherapy", "SVP monotherapy"),
+                        ncol = 2, nrow = 3)
+
+
+ASM_Trends
