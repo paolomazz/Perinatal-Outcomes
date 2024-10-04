@@ -1,0 +1,108 @@
+##ensure only one record for each child in SMR01 and SBR
+SMR01testCHILD <- SMR01testCHILD %>%
+  distinct(child_id, .keep_all = TRUE)
+
+length(unique(SMR01testCHILD$child_id))
+
+SBR <- SBR %>%
+  distinct(child_id, .keep_all = TRUE)
+
+length(unique(SBR$child_id))
+
+##Now join SMR01 and SBR and create one congenital condition variable
+SMR01_SBR <- left_join(SMR01testCHILD, SBR, by = "child_id", keep = FALSE, multiple = "all", unmatched = "drop", relationship = "many-to-many")
+
+SMR01_SBR <- SMR01_SBR %>%
+  mutate(CongenitalConditions = case_when(CongenitalConditions.x == "CongenitalConditions" ~ "CongenitalConditions",
+                                          CongenitalConditions.y == "CongenitalConditions" ~ "CongenitalConditions",
+                                          TRUE ~ "No_CongenitalConditions"))
+
+table(SMR01_SBR$CongenitalConditions)
+
+##ensure only one record per child for this dataframe
+
+length(unique(SMR01_SBR$child_id))
+SMR01_SBR <- SMR01_SBR %>%
+  distinct(child_id, .keep_all = TRUE)
+
+SMR01_SBR$CODING_BIRTH_WEIGHT
+
+##subset dataframe to include only neccessary variables
+
+SMR01_SBR <- subset(SMR01_SBR, select=c("child_id", "CongenitalConditions",
+                                        "CODING_BABY_OUTCOME", "CODING_BIRTH_APGAR_SCORE_5",
+                                        "CODING_BIRTH_WEIGHT"))
+
+
+##make sure no duplicate records in SMR11C, D, E and then join 
+SMR11C <- SMR11C %>%
+  distinct(child_id, .keep_all = TRUE)
+
+SMR11D <- SMR11D %>%
+  distinct(child_id, .keep_all = TRUE)
+
+SMR11E <- SMR11E %>%
+  distinct(child_id, .keep_all = TRUE)
+
+
+SMR11ED <- left_join(SMR11E, SMR11D, by = "child_id", keep = FALSE, multiple = "first", unmatched = "drop", relationship = "many-to-one")
+
+
+SMR11ED <- SMR11ED %>%
+  mutate(CongenitalConditions = case_when(CongenitalConditions.x == "CongenitalConditions" ~ "CongenitalConditions",
+                                          CongenitalConditions.y == "CongenitalConditions" ~ "CongenitalConditions",
+                                          TRUE ~ "No_CongenitalConditions"))
+
+
+SMR11ED <- SMR11ED %>%
+  mutate(LBW = case_when(LBW.x == "LBW" ~ "LBW",
+                         LBW.y == "LBW" ~ "LBW",
+                                TRUE ~ "No_LBW"))
+
+SMR11ED <- subset(SMR11ED, select=c("child_id", "CongenitalConditions"))
+
+
+SMR11EDC <- left_join(SMR11ED, SMR11C, by = "child_id", keep = FALSE, multiple = "first", unmatched = "drop", relationship = "many-to-one")
+
+
+SMR11EDC <- SMR11EDC %>%
+  mutate(CongenitalConditions = case_when(CongenitalConditions.x == "CongenitalConditions" ~ "CongenitalConditions",
+                                          CongenitalConditions.y == "CongenitalConditions" ~ "CongenitalConditions",
+                                          TRUE ~ "No_CongenitalConditions"))
+table(SMR11EDC$CongenitalConditions)
+
+
+SMR11EDC <- SMR11EDC %>%
+  mutate(LBW = case_when(LBW.x == "LBW" ~ "LBW",
+                         LBW.y == "LBW" ~ "LBW",
+                         TRUE ~ "No_LBW"))
+
+SMR11EDC <- subset(SMR11EDC, select=c("child_id", "CongenitalConditions"))
+
+##join SMR11SBRSMR01
+
+SMR11SBRSMR01 <- left_join(SMR01_SBR, SMR11EDC, by = "child_id", keep = FALSE, multiple = "all", unmatched = "drop", relationship = "many-to-many")
+
+SMR11SBRSMR01 <- SMR11SBRSMR01 %>%
+  mutate(CongenitalConditions = case_when(CongenitalConditions.x == "CongenitalConditions" ~ "CongenitalConditions",
+                                          CongenitalConditions.y == "CongenitalConditions" ~ "CongenitalConditions",
+                                          TRUE ~ "No_CongenitalConditions"))
+
+table(SMR11SBRSMR01$CongenitalConditions)
+
+SMR11SBRSMR01 <- SMR11SBRSMR01 %>%
+  mutate(LBW = case_when(LBW == "LBW" ~ "LBW",
+                         CODING_BIRTH_WEIGHT == "LBW" ~ "LBW",
+                         TRUE ~ "No_LBW"))
+
+SMR11SBRSMR01 <- SMR11SBRSMR01 %>%
+  mutate(APGAR_5_MINUTES = case_when(APGAR_5_MINUTES == "SevenandUnderandRR" ~ "SevenandUnderandRR",
+                         CODING_BIRTH_APGAR_SCORE_5 == "SevenandUnderandRR" ~ "SevenandUnderandRR",
+                         TRUE ~ "No_SevenandUnderandRR"))
+
+
+SMR11SBRSMR01 <- subset(SMR11SBRSMR01, select=c("child_id", "CongenitalConditions"))
+
+SMR11SBRSMR01 <- SMR11SBRSMR01 %>%
+  distinct(child_id, .keep_all = TRUE)
+
