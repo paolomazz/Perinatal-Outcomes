@@ -1,0 +1,2738 @@
+###FILTERING AND MERGING###
+
+##Create new dataset to begin manipulation of SMR02 and merging with other datasets
+
+SMR02testFILTER2 <- SMR02_DeathsMothers
+
+##check frequencies of pregnancy end events in SMR02
+table(SMR02testFILTER2$APH)
+table(SMR02testFILTER2$PretermBirth, SMR02testFILTER2$Miscarriage2)
+table(SMR02testFILTER2$PretermBirth, SMR02testFILTER2$Induced_Abortion)
+table(SMR02testFILTER2$INDUCTION_OF_LABOUR)
+table(SMR02testFILTER2$GestationalDiabetes)
+table(SMR02testFILTER2$GestationalHypertension)
+table(SMR02testFILTER2$Miscarriage2)
+table(SMR02testFILTER2$Induced_Abortion)
+table(SMR02testFILTER2$Caesarean)
+table(SMR02testFILTER2$Livebirth)
+table(SMR02testFILTER2$Stillbirth)
+table(SMR02testFILTER2$Preeclampsia)
+table(SMR02testFILTER2$Eclampsia)
+table(SMR02testFILTER2$PPH)
+table(SMR02testFILTER2$PlacentaPraevia)
+table(SMR02testFILTER2$PlacentaAbruption)
+table(SMR02testFILTER2$LBW)
+table(SMR02testFILTER2$PerinatalDeaths)
+table(SMR02testFILTER2$EpilepsyCases)
+
+SMR02testFILTER2$Epil
+##stillbirths
+SMR02testFILTER2 <- SMR02testFILTER2 %>%
+  mutate(Stillbirth = case_when(OUTCOME_OF_PREGNANCY_BABY_1 == "Stillbirth" ~ "Stillbirth",
+                                OUTCOME_OF_PREGNANCY_BABY_2 == "Stillbirth" ~ "Stillbirth",
+                                OUTCOME_OF_PREGNANCY_BABY_3 == "Stillbirth" ~ "Stillbirth",
+                                TRUE ~ "No_Stillbirth"))
+
+SMR02testFILTER2$Stillbirth <- fct_other(SMR02testFILTER2$Stillbirth, keep = 'Stillbirth', other_level = 'No_Stillbirth')
+
+table(SMR02testFILTER2$Stillbirth)
+
+
+SMR02testFILTER3 <- SMR02testFILTER2
+SMR02testFILTER3$Miscarriage2[is.na(SMR02testFILTER3$Miscarriage2)] <- "No_Miscarriage"
+SMR02testFILTER3$Induced[is.na(SMR02testFILTER3$Induced_Abortion)] <- "No"
+SMR02testFILTER3$INDUCTION_OF_LABOUR[is.na(SMR02testFILTER3$INDUCTION_OF_LABOUR)] <- "No"
+SMR02testFILTER3$APH[is.na(SMR02testFILTER3$APH)] <- "No_APH"
+SMR02testFILTER3$PerinatalDeaths[is.na(SMR02testFILTER3$PerinatalDeaths)] <- "No"
+SMR02testFILTER3$LBW[is.na(SMR02testFILTER3$LBW)] <- "No_LBW"
+SMR02testFILTER3$GestationalDiabetes[is.na(SMR02testFILTER2$GestationalDiabetes)] <- "No"
+
+table(SMR02testFILTER3$APH)
+table(SMR02testFILTER3$Miscarriage2)
+table(SMR02testFILTER3$Induced_Abortion)
+table(SMR02testFILTER3$INDUCTION_OF_LABOUR)
+table(SMR02testFILTER3$GestationalDiabetes)
+table(SMR02testFILTER3$GestationalHypertension)
+table(SMR02testFILTER3$Miscarriage2)
+table(SMR02testFILTER3$Induced_Abortion)
+table(SMR02testFILTER3$Caesarean)
+table(SMR02testFILTER3$Livebirth)
+table(SMR02testFILTER3$Stillbirth)
+table(SMR02testFILTER3$Preeclampsia)
+table(SMR02testFILTER3$Eclampsia)
+table(SMR02testFILTER3$PPH)
+table(SMR02testFILTER3$PlacentaPraevia)
+table(SMR02testFILTER3$PlacentaAbruption)
+table(SMR02testFILTER3$LBW)
+table(SMR02testFILTER3$PerinatalDeaths)
+
+
+##Create a pregnancy outcome event variable to identify if an event occurred
+
+PregEvent <- SMR02testFILTER3
+PregEvent <- PregEvent %>%
+  mutate(Outcome = case_when(APH == "APH" ~ "Outcome",
+                             Miscarriage2 == "Miscarriage" ~ "Outcome",
+                             Induced_Abortion == "Induced" ~ "Outcome",
+                             INDUCTION_OF_LABOUR =="Yes" ~ "Outcome",
+                             GestationalDiabetes == "Yes" ~ "Outcome",
+                             GestationalHypertension == "GestHyp" ~ "Outcome",  
+                             Induced_Abortion == "Induced" ~ "Outcome",
+                             Caesarean == "Caeserean" ~ "Outcome",
+                             Livebirth == "Livebirth" ~ "Outcome",
+                             Stillbirth == "Stillbirth" ~ "Outcome",
+                             Preeclampsia == "Preeclampsia" ~ "Outcome",
+                             Eclampsia == "Eclampsia" ~ "Outcome",
+                             PPH == "PPH" ~ "Outcome",
+                             PlacentaPraevia == "PlacPrae" ~ "Outcome",
+                             PlacentaAbruption == "PlacAbr" ~ "Outcome",  
+                             LBW == "LBW" ~ "Outcome",
+                             PerinatalDeaths == "Yes" ~ "Outcome",
+                             TRUE ~ "No_Outcome"))
+
+
+PregEvent$Outcome <- fct_other(PregEvent$Outcome, keep = 'Outcome', other_level = 'No_Outcome')
+
+table(PregEvent$Outcome)
+
+table(PregEvent$Delivery_Cohort, PregEvent$Livebirth)
+table(PregEvent$Livebirth)
+table(PregEvent$Stillbirth)
+
+PregEvent <- PregEvent[PregEvent$Outcome=="Outcome", ]
+
+##create outcome date
+PregEvent <- PregEvent %>%
+  mutate(OutcomeDate = case_when(APH == "APH" ~ paste(ADMISSION_DATE),
+                                 Miscarriage2 == "Miscarriage" ~ paste(ADMISSION_DATE),
+                                 Induced_Abortion == "Induced" ~ paste(ADMISSION_DATE),
+                                 INDUCTION_OF_LABOUR =="Yes" ~ paste(ADMISSION_DATE),
+                                 GestationalDiabetes == "Yes" ~ paste(ADMISSION_DATE),
+                                 GestationalHypertension == "GestHyp" ~ paste(ADMISSION_DATE),
+                                 Induced_Abortion == "Induced" ~ paste(ADMISSION_DATE),
+                                 Caesarean == "Caeserean" ~ paste(ADMISSION_DATE),
+                                 Livebirth == "Livebirth" ~ paste(ADMISSION_DATE),
+                                 Stillbirth == "Stillbirth" ~ paste(ADMISSION_DATE),
+                                 Preeclampsia == "Preeclampsia" ~ paste(ADMISSION_DATE),
+                                 Eclampsia == "Eclampsia" ~ paste(ADMISSION_DATE),
+                                 PPH == "PPH" ~ paste(ADMISSION_DATE),
+                                 PlacentaPraevia == "PlacPrae" ~ paste(ADMISSION_DATE),
+                                 PlacentaAbruption == "PlacAbr" ~ paste(ADMISSION_DATE),
+                                 LBW == "LBW" ~ paste(ADMISSION_DATE),
+                                 PerinatalDeaths == "Yes" ~ paste(DeathDate)))
+
+
+##rename as new df
+
+RO_1_Combined <- PregEvent
+
+##relevel epilepsy cases and pregnancy end variables
+RO_1_Combined$EpilepsyCases <- relevel(RO_1_Combined$EpilepsyCases, ref = "No_Epilepsy")
+RO_1_Combined$Induced_Abortion <- relevel(RO_1_Combined$Induced_Abortion, ref = "No_Induced")
+RO_1_Combined$Miscarriage2 <- relevel(RO_1_Combined$Miscarriage2, ref = "No_Miscarriage")
+RO_1_Combined$PerinatalDeaths <- relevel(RO_1_Combined$PerinatalDeaths, ref = "No")
+RO_1_Combined$Stillbirth <- relevel(RO_1_Combined$Stillbirth, ref = "No_Stillbirth")
+RO_1_Combined$Livebirth <- relevel(RO_1_Combined$Livebirth, ref = "No_Livebirth")
+
+table(RO_1_Combined$Induced_Abortion)
+table(RO_1_Combined$Miscarriage2)
+table(RO_1_Combined$PerinatalDeaths)
+table(RO_1_Combined$Stillbirth)
+table(RO_1_Combined$Livebirth)
+
+RO1 <- RO_1_Combined
+
+##create pregnancy end date variable
+
+RO1 <- RO1 %>%
+  mutate(PregnancyEndDate = case_when(Livebirth == "Livebirth" ~ paste(DeliveryDate),
+                                      Induced_Abortion=="Induced" ~ paste(ADMISSION_DATE),
+                                      Miscarriage2=="Miscarriage" ~ paste(ADMISSION_DATE),
+                                      Stillbirth=="Stillbirth" ~ paste(ADMISSION_DATE),
+                                      PerinatalDeaths=="Yes" ~ paste(DeathDate)))
+RO1check <- RO1
+RO1check <- subset(RO1check, select=c("mother_id", "Livebirth", "Stillbirth", "Induced_Abortion", "Miscarriage2", "PerinatalDeaths", "DeliveryDate", "ADMISSION_DATE", "DeathDate", "PregnancyEndDate"))
+
+RO1check <- RO1check %>%
+  mutate(DeathDateError = case_when(DeathDate < ADMISSION_DATE ~ "Error",
+                                    DeathDate >= ADMISSION_DATE ~ "No_Error"))
+table(RO1check$DeathDateError)
+RO1check <- subset(RO1check, select=c("mother_id", "PregnancyEndDate"))
+
+
+RO1MISS <- miss_var_summary(RO1)
+print(RO1MISS, n=130)
+
+
+RO1$EventCohort <- RO1$PregnancyEndDate
+table(RO1$EventCohort)
+RO1 <- RO1 %>% mutate(EventCohort = case_when(PregnancyEndDate <= ymd("2008-12-01") ~ "First",
+                                              PregnancyEndDate >= ymd("2009-01-01") ~ "Second"))
+
+
+RO1$EventCohort <- as.factor(RO1$EventCohort)
+table(RO1$EventCohort)
+levels(RO1$EventCohort)
+
+##Create pregnancy period variable based on event date and pregnancy end date
+test <- RO1
+
+test$OutcomeDate <- as.Date(test$OutcomeDate)
+test$PregnancyEndDate <- as.Date(test$PregnancyEndDate)
+
+##create a pregnancy number so that if an outcome date is greater than 12 months
+##after first outcome date, it is a new pregnancy. This accounts for postnatal deaths.
+test <- test %>%
+  arrange(mother_id, OutcomeDate) %>%
+  group_by(mother_id) %>%
+  mutate(PregnancyNumber = cumsum(OutcomeDate - lag(OutcomeDate, default = first(OutcomeDate)) > 365) + 1) %>%
+  group_by(mother_id, PregnancyNumber)
+
+##subset to check perinatal deaths have not been counted twice as different pregnancy numbers
+test1 <- subset(test, select=c("mother_id", "ADMISSION_DATE", "OutcomeDate", "PregnancyNumber", "PerinatalDeaths"))
+
+##okay that is confirmed. But there are multiple rows for the same perinatal death, which is
+##creating duplicated rows.I will come to that a few lines down.
+##For now, I need to subset and check that data points of the same pregnancy have not been lost
+test2 <- subset(test, select=c("mother_id", "ADMISSION_DATE", "OutcomeDate", "PregnancyNumber"))
+
+test3 <- test2 %>%
+  group_by(mother_id) %>%
+  subset(PregnancyNumber == 1)
+
+test4 <- test3 %>%
+  group_by(mother_id) %>%
+  filter(n() > 1)
+
+##now I need to subset the data frames and rejoin them, so that I only get one row
+##per pregnancy period. This should remove the multiple deaths error.
+##subset data frame to include only pregnancy end date variables
+test4 <- test
+test4 <- subset(test4, select = c("mother_id", "PregnancyNumber", "PregnancyEndDate", "PerinatalDeaths", "Induced_Abortion", "Miscarriage2", "Livebirth", "Stillbirth"))
+
+table(test4$Livebirth)
+table(test4$Stillbirth)
+table(test4$PerinatalDeaths)
+table(test4$Miscarriage2)
+table(test4$Induced_Abortion)
+
+##remove rows where there is no pregnancy end date, these are duplicates
+test4 <- test4[complete.cases(test4$PregnancyEndDate), ]
+
+
+##subset data frame to include all variables not recorded at delivery
+test5 <- test
+test5 <- subset(test5, select=c("mother_id", "PregnancyNumber", "APH", "GestationalDiabetes",
+                                "GestationalHypertension", "Preeclampsia", "PHD", "Pre_Diabetes",
+                                "PregnancyEndDate", "Eclampsia", "PlacentaPraevia", "PlacentaAbruption"))
+
+
+##subset data frame to include all variables apart from those not recorded at delivery
+test6 <- test
+test6 <- subset(test6, select=c("mother_id", "PregnancyNumber", "ADMISSION_DATE", "DATE_OF_DELIVERY", "DISCHARGE_DATE", "Maternal_Age", "DeathDate", "DeliveryDate", "Delivery_Cohort", "BodyMassIndex5", "TOTAL_PREVIOUS_PREGNANCIES",
+                                "PREVIOUS_SPONTANEOUS_ABORTIONS", "PREVIOUS_THERAPUTIC_ABORTIONS", "gestationalage", "gestationalage1", "gestationalage2", "gestationalage3",
+                                "PREVIOUS_CEASAREAN_SECTIONS", "TOTAL_PREVIOUS_STILLBIRTHS",
+                                "TOTAL_PREVIOUS_NEONATAL_DEATHS", "DRUG_MISUSE", "INJECTED_ILLICIT_DRUGS",
+                                "WEEKLY_ALCOHOL_CONSUMPTION", "ANTENATAL_STEROIDS", "Preexisting_DIABETES",
+                                "ESTIMATED_GESTATION", "SMOKER_DURING_PREGNANCY", "PHD", "Pre_Diabetes",
+                                "BOOKING_SMOKING_HISTORY", "ANALGESIA_DURING_LABOUR_OR_DEL",
+                                "INDUCTION_OF_LABOUR", "NUM_OF_BIRTHS_THIS_PREGNANCY",
+                                "SEX_BABY_1", "PARITY", "SIMD",  "Early_NeonatalDeath", "Late_NeonatalDeath", "PostNeonatalDeath",
+                                "Caesarean", "Apgar_5_Min", "OutcomeDate", "Outcome", "PregnancyEndDate",
+                                "NICU", "PPH", "LBW", "PretermBirth", "EpilepsyCases"))
+
+
+
+##Join test4 and test5 again to create a new data frame with one row per pregnancy end date
+
+test7 <- left_join(test4, test5, by=c("mother_id", "PregnancyNumber", "PregnancyEndDate"), keep = F, multiple = "first", unmatched = "drop", relationship = "many-to-one")
+
+##Join test7 and test6 again to create a new data frame with one row per pregnancy end date
+
+test8 <- left_join(test6, test7, by=c("mother_id", "PregnancyNumber", "PregnancyEndDate"), keep = F, multiple = "first", unmatched = "drop", relationship = "many-to-one")
+
+##remove duplicates from test8 so that only pregnancies with an end date are included. Again,
+##this should remove the possibility of duplicated rows,
+test9 <- test8[complete.cases(test8$PregnancyEndDate), ]
+
+##test9 looks good, but now I need to check for duplicates by investigating if pregnancy
+#end variables add up to the total number of observations
+table(test9$Livebirth)
+table(test9$Stillbirth)
+table(test9$PerinatalDeaths)
+table(test9$Miscarriage2)
+table(test9$Induced_Abortion)
+
+##they do, but I need to check that the frequency of Livebirths=No equates to
+##the total frequency of other pregnancy end date variables
+
+##discrepancy. This could be mutliple outcomes at end (e.g. maternal death and stillbirth)
+##Now I need to check the pregnancy end variables to identify errors
+testcheck3 <- subset(test9, select=c(mother_id, NUM_OF_BIRTHS_THIS_PREGNANCY, PregnancyEndDate, PregnancyNumber, Livebirth, Stillbirth, PerinatalDeaths, Miscarriage2, Induced_Abortion))
+
+##okay I can see that some pregnancies have been duplicated because of no recorded
+##number of births this pregnancy.
+##I need group by mother id, make only distinct pregnancy numbers show
+##and filter to include only pregnancies with Yes in pregnancy end variables.
+testcheck4 <- testcheck3 %>%
+  group_by(mother_id) %>%
+  distinct(PregnancyNumber, .keep_all = TRUE) %>%
+  filter(Livebirth == "Livebirth" | Stillbirth == "Stillbirth" | PerinatalDeaths == "Yes" | Miscarriage2 == "Miscarriage" | Induced_Abortion == "Induced", .keep_all = TRUE)
+
+
+##now check that the frequency of Livebirth=No equates to the total frequency
+##of other pregnancy end variables
+
+table(testcheck4$Livebirth)
+table(testcheck4$Stillbirth)
+table(testcheck4$Induced_Abortion)
+table(testcheck4$Miscarriage2)
+table(testcheck4$PerinatalDeaths)
+
+
+##there is a discrepancy. Need to filter by mother_id, pregnancy number and
+##pregnancy end date to ensure only one record per outcome is present.
+testcheck5 <- testcheck4
+testcheck5 <- testcheck5 %>%
+  distinct(mother_id, PregnancyNumber, PregnancyEndDate, .keep_all = TRUE)
+
+testcheck5$NUM_OF_BIRTHS_THIS_PREGNANCY[is.na(testcheck5$NUM_OF_BIRTHS_THIS_PREGNANCY)] <- "0"
+
+
+table(testcheck5$Livebirth)
+table(testcheck5$Stillbirth)
+table(testcheck5$Induced_Abortion)
+table(testcheck5$Miscarriage2)
+table(testcheck5$PerinatalDeaths)
+
+
+##create an errors dataset to see where the errors are occurring, looks like
+##it is miscarriage and induced abortion, which cannot coexist
+testcheck5_Errors <- testcheck5
+testcheck5_Errors <- testcheck5_Errors %>%
+  mutate(Error = case_when(Livebirth == "Livebirth" & Stillbirth == "Stillbirth" ~ "Error1",
+                           Livebirth == "Livebirth" & Induced_Abortion == "Induced" ~ "Error2",
+                           Livebirth == "Livebirth" & Miscarriage2 == "Miscarriage" ~ "Error3",
+                           Livebirth == "Livebirth" & PerinatalDeaths == "Yes" ~ "Error4",
+                           Stillbirth == "Stillbirth" & Induced_Abortion == "Induced" ~ "Error5",
+                           Stillbirth == "Stillbirth" & Miscarriage2 == "Miscarriage" ~ "Error6",
+                           Stillbirth == "Stillbirth" & PerinatalDeaths == "Yes" ~ "Error7",
+                           Induced_Abortion == "Induced" & Miscarriage2 == "Miscarriage" ~ "Error8",
+                           Induced_Abortion == "Induced" & PerinatalDeaths == "Yes" ~ "Error9",
+                           Miscarriage2 == "Miscarriage" & PerinatalDeaths == "Yes" ~ "Error10",
+                           TRUE ~ "No_Error"))
+
+
+table(testcheck5_Errors$Error)
+
+
+##the above figure matches the discrepancy detailed above. The table shows  that some
+##pregnancies have duplicate events for
+##Error1: Livebirth == "Livebirth" & Stillbirth == "Stillbirth"
+##Error3: Livebirth == "Livebirth" & Miscarriage2 == "Miscarriage"
+##Error4: Livebirth == "Livebirth" & PerinatalDeaths == "Yes"
+##Error5: Stillbirth == "Stillbirth" & Induced_Abortion == "Induced"
+##Error6: Stillbirth == "Stillbirth" & Miscarriage2 == "Miscarriage"
+##Error7: Stillbirth == "Stillbirth" & PerinatalDeaths == "Yes"
+##Error8: Induced_Abortion == "Induced" & Miscarriage2 == "Miscarriage"
+##Error9: Induced_Abortion == "Induced" & PerinatalDeaths == "Yes"
+##Error10: Miscarriage2 == "Miscarriage" & PerinatalDeaths == "Yes"
+
+##it is possible to have Errors 1, 4, 7, 8, 9 and 10
+##I now need to recode the Error variable where error 3, 5, 6 are coded as error and the
+##others are included in no error.
+
+testcheck5_Errors$Error <- as.factor(testcheck5_Errors$Error)
+levels(testcheck5_Errors$Error)
+
+testcheck5_Errors$Error2 <- testcheck5_Errors$Error
+
+testcheck5_Errors$Error2 <- fct_collapse(testcheck5_Errors$Error2, Error = c("Error3", "Error5", "Error6"))
+
+testcheck5_Errors <- testcheck5_Errors %>%
+  mutate(Error3 = case_when(Error2 == "Error" ~ "Error",
+                            TRUE ~ "No_Error"))
+testcheck5_Errors$Error3 <- fct_other(testcheck5_Errors$Error3, keep = 'Error', other_level = 'No_Error')
+
+table(testcheck5_Errors$Error3)
+
+##Now I can subset to only include the joining variables and error 3 variable
+
+
+testcheck6_Errors <- testcheck5_Errors
+testcheck6_Errors <- subset(testcheck6_Errors, select = c("mother_id", "PregnancyNumber", "Error3"))
+
+##Now I need to go back to test9 or testcheck3 to trace back my steps from here,
+##so that I can get down to the testcheck6 population number
+## then I can join testcheck 6 to the main data frame and collapse that data frame
+##to only include complete case data with no error
+test10 <- test9 %>%
+  group_by(mother_id) %>%
+  distinct(PregnancyNumber, .keep_all = TRUE) %>%
+  filter(Livebirth == "Livebirth" | Stillbirth == "Stillbirth" | PerinatalDeaths == "Yes" | Miscarriage2 == "Miscarriage" | Induced_Abortion == "Induced", .keep_all = TRUE)
+
+##now check that the frequency of Livebirth=No equates to the total frequency
+##of other pregnancy end variables
+
+table(test10$Livebirth)
+table(test10$Stillbirth)
+table(test10$Induced_Abortion)
+table(test10$Miscarriage2)
+table(test10$PerinatalDeaths)
+ 
+
+##there is a discrepancy. Need to filter by mother_id, pregnancy number and
+##pregnancy end date to ensure only one record per outcome is present.
+test11 <- test10
+test11 <- test11 %>%
+  distinct(mother_id, PregnancyNumber, PregnancyEndDate, .keep_all = TRUE)
+
+test11$NUM_OF_BIRTHS_THIS_PREGNANCY[is.na(testcheck5$NUM_OF_BIRTHS_THIS_PREGNANCY)] <- "0"
+
+
+table(test11$Livebirth)
+table(test11$Stillbirth)
+table(test11$Induced_Abortion)
+table(test11$Miscarriage2)
+table(test11$PerinatalDeaths)
+
+##merge testecheckerror6 with test11 to remove errors
+
+test12 <- left_join(test11, testcheck6_Errors, by=c("mother_id", "PregnancyNumber"), keep = F, multiple = "first", unmatched = "drop", relationship = "many-to-one")
+
+test12 <- test12[test12$Error3 =="No_Error", ]
+
+
+
+##merge SMR01 and SMR02
+SMR01testfilter <- subset(SMR01test, select=c("mother_id", "EpilepsyCases", "EpilepsyAdmissionDate"))
+
+miss_var_summary(SMR01testfilter)
+
+
+ResearchQuestion1 <- left_join(test12, SMR01testfilter, by = c("mother_id", "EpilepsyCases"), keep = FALSE, multiple = "first", unmatched = "drop", relationship = "many-to-one")
+table(ResearchQuestion1$EpilepsyCases)
+
+
+ResearchQuestion1$PHD <- ResearchQuestion1$PHD.x
+ResearchQuestion1$Pre_Diabetes <- ResearchQuestion1$Pre_Diabetes.x
+
+ResearchQuestion1b <- subset(ResearchQuestion1, select=c("mother_id", "PregnancyNumber", "PHD", "Pre_Diabetes"))
+
+##Now merge with PIS (2009-2021)
+
+RO1_0921 <- ResearchQuestion1
+
+RO1_PIS <- left_join(RO1_0921, PISMother2, by = "mother_id", keep = FALSE, multiple = "all", unmatched = "drop", relationship = "many-to-many")
+
+RO1_PIS2 <- RO1_PIS %>%
+  distinct(mother_id, PregnancyNumber, approved_name, date_dispensed, .keep_all = TRUE)
+
+
+RO1_PIS3 <- RO1_PIS2
+
+RO1_PIS3$Prenatal1 <- RO1_PIS3$DeliveryDate-RO1_PIS3$gestationalage1
+
+  
+  ##identify prenatal ASM exposure for each ASM
+  comparison <- function(x, y, z) {
+    case_when(is.na(z) ~ NA_character_,
+              z >= x & z <= y |
+                is.na(x) & y == z |
+                is.na(y) & x == z ~ 'within',
+              z > x & z > y ~ 'above',
+              TRUE ~ 'below')
+  }
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal_ASM = comparison(Prenatal1, DeliveryDate, date_dispensed))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_GABA = case_when(Prenatal_ASM == "within" & approved_name == "GABAPENTIN" ~ "Yes",  
+                                    TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_PRG = case_when(Prenatal_ASM == "within" & approved_name == "PREGABALIN" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_LCS = case_when(Prenatal_ASM == "within" & approved_name == "LACOSAMIDE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_TPR = case_when(Prenatal_ASM == "within" & approved_name == "TOPIRAMATE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_CBZ = case_when(Prenatal_ASM == "within" & approved_name == "CARBAMAZEPINE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_LVT = case_when(Prenatal_ASM == "within" & approved_name == "LEVETIRACETAM" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_LMT = case_when(Prenatal_ASM == "within" & approved_name == "LAMOTRIGINE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_RTG = case_when(Prenatal_ASM == "within" & approved_name == "RETIGABINE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_CLZ = case_when(Prenatal_ASM == "within" & approved_name == "CLONAZEPAM" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_SVP = case_when(Prenatal_ASM == "within" & approved_name == "SODIUM VALPROATE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_PHT = case_when(Prenatal_ASM == "within" & approved_name == "PHENYTOIN" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_CLB = case_when(Prenatal_ASM == "within" & approved_name == "CLOBAZAM" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_PRP = case_when(Prenatal_ASM == "within" & approved_name == "PERAMPANEL" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_ZNS = case_when(Prenatal_ASM == "within" & approved_name == "ZONISAMIDE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_PHB = case_when(Prenatal_ASM == "within" & approved_name == "PHENOBARBITAL" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_PRM = case_when(Prenatal_ASM == "within" & approved_name == "PRIMIDONE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_OXC = case_when(Prenatal_ASM == "within" & approved_name == "OXCARBAZEPINE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_BRV = case_when(Prenatal_ASM == "within" & approved_name == "BRIVARACETAM" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_ESL = case_when(Prenatal_ASM == "within" & approved_name == "ESLICARBAZEPINE" ~ "Yes",
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_TIA = case_when(Prenatal_ASM == "within" & approved_name == "TIAGABINE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_ETH = case_when(Prenatal_ASM == "within" & approved_name == "ETHOSUXIMIDE" ~ "Yes",
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_VIG = case_when(Prenatal_ASM == "within" & approved_name == "VIGABATRIN" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_DIA = case_when(Prenatal_ASM == "within" & approved_name == "DIAZEPAM" ~ "Yes",
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_LOR = case_when(Prenatal_ASM == "within" & approved_name == "LORAZEPAM" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_MID = case_when(Prenatal_ASM == "within" & approved_name == "MIDAZOLAM HYDROCHLORIDE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_NIT = case_when(Prenatal_ASM == "within" & approved_name == "NITRAZEPAM" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_PIR = case_when(Prenatal_ASM == "within" & approved_name == "PIRACETAM" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_TEM = case_when(Prenatal_ASM == "within" & approved_name == "TEMAZEPAM" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+
+
+
+RO1_PIS3$Prenatal1_DIA <- as.factor(RO1_PIS3$Prenatal1_DIA)
+
+RO1_PIS3$Prenatal1_LOR <- as.factor(RO1_PIS3$Prenatal1_LOR)
+
+RO1_PIS3$Prenatal1_MID <- as.factor(RO1_PIS3$Prenatal1_MID)
+
+RO1_PIS3$Prenatal1_NIT <- as.factor(RO1_PIS3$Prenatal1_NIT)
+
+RO1_PIS3$Prenatal1_PIR <- as.factor(RO1_PIS3$Prenatal1_PIR)
+
+RO1_PIS3$Prenatal1_TEM <- as.factor(RO1_PIS3$Prenatal1_TEM)
+
+RO1_PIS3$Prenatal1_GABA <- as.factor(RO1_PIS3$Prenatal1_GABA)
+
+RO1_PIS3$Prenatal1_PRG <- as.factor(RO1_PIS3$Prenatal1_PRG)
+
+RO1_PIS3$Prenatal1_LCS <- as.factor(RO1_PIS3$Prenatal1_LCS)
+
+RO1_PIS3$Prenatal1_TPR <- as.factor(RO1_PIS3$Prenatal1_TPR)
+
+RO1_PIS3$Prenatal1_CBZ <- as.factor(RO1_PIS3$Prenatal1_CBZ)
+
+RO1_PIS3$Prenatal1_LVT <- as.factor(RO1_PIS3$Prenatal1_LVT)
+
+RO1_PIS3$Prenatal1_LMT <- as.factor(RO1_PIS3$Prenatal1_LMT)
+
+RO1_PIS3$Prenatal1_RTG <- as.factor(RO1_PIS3$Prenatal1_RTG)
+
+RO1_PIS3$Prenatal1_CLZ <- as.factor(RO1_PIS3$Prenatal1_CLZ)
+
+RO1_PIS3$Prenatal1_SVP <- as.factor(RO1_PIS3$Prenatal1_SVP)
+
+RO1_PIS3$Prenatal1_PHT <- as.factor(RO1_PIS3$Prenatal1_PHT)
+
+RO1_PIS3$Prenatal1_CLB <- as.factor(RO1_PIS3$Prenatal1_CLB)
+
+RO1_PIS3$Prenatal1_PRP <- as.factor(RO1_PIS3$Prenatal1_PRP)
+
+RO1_PIS3$Prenatal1_ZNS <- as.factor(RO1_PIS3$Prenatal1_ZNS)
+
+RO1_PIS3$Prenatal1_PHB <- as.factor(RO1_PIS3$Prenatal1_PHB)
+
+RO1_PIS3$Prenatal1_PRM <- as.factor(RO1_PIS3$Prenatal1_PRM)
+
+RO1_PIS3$Prenatal1_OXC <- as.factor(RO1_PIS3$Prenatal1_OXC)
+
+RO1_PIS3$Prenatal1_BRV <- as.factor(RO1_PIS3$Prenatal1_BRV)
+
+RO1_PIS3$Prenatal1_ESL <- as.factor(RO1_PIS3$Prenatal1_ESL)
+
+RO1_PIS3$Prenatal1_TIA <- as.factor(RO1_PIS3$Prenatal1_TIA)
+
+RO1_PIS3$Prenatal1_ETH <- as.factor(RO1_PIS3$Prenatal1_ETH)
+
+RO1_PIS3$Prenatal1_VIG <- as.factor(RO1_PIS3$Prenatal1_VIG)
+
+
+table(RO1_PIS3$Prenatal1_DIA)
+table(RO1_PIS3$Prenatal1_TEM)
+table(RO1_PIS3$Prenatal1_PRG)
+table(RO1_PIS3$Prenatal1_GABA)
+
+
+
+##code ASM exposure as Any ASM exposure
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(AnyAsm1 = case_when(Prenatal1_DIA == "Yes" ~ "Yes",
+                             Prenatal1_LOR == "Yes" ~ "Yes",
+                             Prenatal1_MID == "Yes" ~ "Yes",
+                             Prenatal1_NIT == "Yes" ~ "Yes",
+                             Prenatal1_PIR == "Yes" ~ "Yes",
+                             Prenatal1_TEM == "Yes" ~ "Yes",
+                             Prenatal1_GABA == "Yes" ~ "Yes",
+                             Prenatal1_PRG == "Yes" ~ "Yes",
+                             Prenatal1_LCS == "Yes" ~ "Yes",
+                             Prenatal1_TPR == "Yes" ~ "Yes",
+                             Prenatal1_CBZ == "Yes" ~ "Yes",
+                             Prenatal1_LVT == "Yes" ~ "Yes",
+                             Prenatal1_LMT == "Yes" ~ "Yes",
+                             Prenatal1_RTG == "Yes" ~ "Yes",
+                             Prenatal1_CLZ == "Yes" ~ "Yes",
+                             Prenatal1_SVP == "Yes" ~ "Yes",
+                             Prenatal1_PHT == "Yes" ~ "Yes",
+                             Prenatal1_CLB == "Yes" ~ "Yes",
+                             Prenatal1_PRP == "Yes" ~ "Yes",
+                             Prenatal1_ZNS == "Yes" ~ "Yes",
+                             Prenatal1_PHB == "Yes" ~ "Yes",
+                             Prenatal1_PRM == "Yes" ~ "Yes",
+                             Prenatal1_OXC == "Yes" ~ "Yes",
+                             Prenatal1_BRV == "Yes" ~ "Yes",
+                             Prenatal1_ESL == "Yes" ~ "Yes",
+                             Prenatal1_TIA == "Yes" ~ "Yes",
+                             Prenatal1_ETH == "Yes" ~ "Yes",
+                             Prenatal1_VIG == "Yes" ~ "Yes",
+                             TRUE ~ "No"))
+
+RO1_PIS3$AnyAsm1 <- fct_other(RO1_PIS3$AnyAsm1, keep = "Yes", other_level = "No")
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(AnyAsm4 = case_when(Prenatal1_PIR == "Yes" |
+                               Prenatal1_LCS == "Yes" |
+                               Prenatal1_TPR == "Yes" |
+                               Prenatal1_CBZ == "Yes" |
+                               Prenatal1_LVT == "Yes" |
+                               Prenatal1_LMT == "Yes" |
+                               Prenatal1_RTG == "Yes" |
+                               Prenatal1_SVP == "Yes" |
+                               Prenatal1_PHT == "Yes" |
+                               Prenatal1_CLB == "Yes" |
+                               Prenatal1_PRP == "Yes" |
+                               Prenatal1_ZNS == "Yes" |
+                               Prenatal1_PHB == "Yes" |
+                               Prenatal1_PRM == "Yes" |
+                               Prenatal1_OXC == "Yes" |
+                               Prenatal1_BRV == "Yes" |
+                               Prenatal1_ESL == "Yes" |
+                               Prenatal1_TIA == "Yes" |
+                               Prenatal1_ETH == "Yes" |
+                               Prenatal1_VIG == "Yes" ~ "Yes",
+                             TRUE ~ "No"))
+
+RO1_PIS3$AnyAsm4 <- fct_other(RO1_PIS3$AnyAsm4, keep = "Yes", other_level = "No")
+
+
+
+table(RO1_PIS3$AnyAsm1, RO1_PIS3$EpilepsyCases2)
+table(RO1_PIS3$AnyAsm4, RO1_PIS3$EpilepsyCases2)
+
+RO1_PIS3a <- RO1_PIS3
+
+
+RO1_PIS3c <- RO1_PIS3a %>%
+  distinct(mother_id.x, approved_name, date_dispensed, .keep_all = TRUE)
+
+RO1_PIS3d <- subset(RO1_PIS3c, select=c("mother_id.x", "DeliveryDate",
+                                        "AnyAsm1", "AnyAsm4",
+                                        "Prenatal1_GABA", "Prenatal1_PRG",
+                                        "Prenatal1_LCS", "Prenatal1_TPR",
+                                        "Prenatal1_CBZ", "Prenatal1_LVT",
+                                        "Prenatal1_LMT", "Prenatal1_RTG",
+                                        "Prenatal1_CLZ", "Prenatal1_SVP",
+                                        "Prenatal1_PHT", "Prenatal1_CLB",
+                                        "Prenatal1_PRP", "Prenatal1_ZNS",
+                                        "Prenatal1_PHB", "Prenatal1_PRM",
+                                        "Prenatal1_OXC", "Prenatal1_BRV",
+                                        "Prenatal1_ESL", "Prenatal1_TIA",
+                                        "Prenatal1_ETH", "Prenatal1_VIG",
+                                        "Prenatal1_DIA", "Prenatal1_LOR",
+                                        "Prenatal1_MID", "Prenatal1_NIT",
+                                        "Prenatal1_PIR", "Prenatal1_TEM"))
+
+
+
+RO1_PIS3d_long <- pivot_longer(RO1_PIS3d,
+                               cols = starts_with("Prenatal1_"),
+                               names_to = "ASM",
+                               values_to = "Exposed")
+
+RO1_PIS3d_longb <- RO1_PIS3d_long %>%
+  distinct(mother_id.x, DeliveryDate, AnyAsm1, AnyAsm4, ASM, Exposed, .keep_all = TRUE)
+
+RO1_PIS3d_longb2 <- RO1_PIS3d_longb %>%
+  filter(Exposed == "Yes")
+
+RO1_PIS3d_wide <- RO1_PIS3d_longb2 %>%
+  pivot_wider(id_cols = mother_id.x:AnyAsm4, names_from = ASM, values_from = Exposed)
+
+
+
+levels(RO1_PIS3d_wide$Prenatal1_GABA)
+table(RO1_PIS3d_wide$Prenatal1_GABA)
+
+RO1_PIS3d_wide$Prenatal1_GABA[is.na(RO1_PIS3d_wide$Prenatal1_GABA)] <- "No"
+RO1_PIS3d_wide$Prenatal1_PRG[is.na(RO1_PIS3d_wide$Prenatal1_PRG)] <- "No"
+RO1_PIS3d_wide$Prenatal1_LCS[is.na(RO1_PIS3d_wide$Prenatal1_LCS)] <- "No"
+RO1_PIS3d_wide$Prenatal1_TPR[is.na(RO1_PIS3d_wide$Prenatal1_TPR)] <- "No"
+RO1_PIS3d_wide$Prenatal1_CBZ[is.na(RO1_PIS3d_wide$Prenatal1_CBZ)] <- "No"
+RO1_PIS3d_wide$Prenatal1_LVT[is.na(RO1_PIS3d_wide$Prenatal1_LVT)] <- "No"
+RO1_PIS3d_wide$Prenatal1_LMT[is.na(RO1_PIS3d_wide$Prenatal1_LMT)] <- "No"
+RO1_PIS3d_wide$Prenatal1_RTG[is.na(RO1_PIS3d_wide$Prenatal1_RTG)] <- "No"
+RO1_PIS3d_wide$Prenatal1_CLZ[is.na(RO1_PIS3d_wide$Prenatal1_CLZ)] <- "No"
+RO1_PIS3d_wide$Prenatal1_SVP[is.na(RO1_PIS3d_wide$Prenatal1_SVP)] <- "No"
+RO1_PIS3d_wide$Prenatal1_PHT[is.na(RO1_PIS3d_wide$Prenatal1_PHT)] <- "No"
+RO1_PIS3d_wide$Prenatal1_CLB[is.na(RO1_PIS3d_wide$Prenatal1_CLB)] <- "No"
+RO1_PIS3d_wide$Prenatal1_PRP[is.na(RO1_PIS3d_wide$Prenatal1_PRP)] <- "No"
+RO1_PIS3d_wide$Prenatal1_ZNS[is.na(RO1_PIS3d_wide$Prenatal1_ZNS)] <- "No"
+RO1_PIS3d_wide$Prenatal1_PHB[is.na(RO1_PIS3d_wide$Prenatal1_PHB)] <- "No"
+RO1_PIS3d_wide$Prenatal1_PRM[is.na(RO1_PIS3d_wide$Prenatal1_PRM)] <- "No"
+RO1_PIS3d_wide$Prenatal1_OXC[is.na(RO1_PIS3d_wide$Prenatal1_OXC)] <- "No"
+RO1_PIS3d_wide$Prenatal1_BRV[is.na(RO1_PIS3d_wide$Prenatal1_BRV)] <- "No"
+RO1_PIS3d_wide$Prenatal1_ESL[is.na(RO1_PIS3d_wide$Prenatal1_ESL)] <- "No"
+RO1_PIS3d_wide$Prenatal1_TIA[is.na(RO1_PIS3d_wide$Prenatal1_TIA)] <- "No"
+RO1_PIS3d_wide$Prenatal1_ETH[is.na(RO1_PIS3d_wide$Prenatal1_ETH)] <- "No"
+RO1_PIS3d_wide$Prenatal1_VIG[is.na(RO1_PIS3d_wide$Prenatal1_VIG)] <- "No"
+RO1_PIS3d_wide$Prenatal1_DIA[is.na(RO1_PIS3d_wide$Prenatal1_DIA)] <- "No"
+RO1_PIS3d_wide$Prenatal1_LOR[is.na(RO1_PIS3d_wide$Prenatal1_LOR)] <- "No"
+RO1_PIS3d_wide$Prenatal1_MID[is.na(RO1_PIS3d_wide$Prenatal1_MID)] <- "No"
+RO1_PIS3d_wide$Prenatal1_NIT[is.na(RO1_PIS3d_wide$Prenatal1_NIT)] <- "No"
+RO1_PIS3d_wide$Prenatal1_PIR[is.na(RO1_PIS3d_wide$Prenatal1_PIR)] <- "No"
+RO1_PIS3d_wide$Prenatal1_TEM[is.na(RO1_PIS3d_wide$Prenatal1_TEM)] <- "No"
+
+
+library(stringr)                                               
+##code ASM to mono and poly
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(ASMfreq1 = rowSums(RO1_PIS3d_wide[, Prenatal1_TEM:Prenatal1_PIR] == "Yes"))
+
+table(RO1_PIS3d_wide$ASMfreq1)
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(ASMfreq1 = rowSums(across(contains("Prenatal1_"), ~ .x == "Yes")))
+
+table(RO1_PIS3d_wide$ASMfreq1)
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(ASMfreq1 = case_when(ASMfreq1 == 1 ~ "Mono",
+                              ASMfreq1 >1 ~ "Poly",
+                              ASMfreq1 == 0 ~ "None",
+                              TRUE ~ "No"))
+
+table(RO1_PIS3d_wide$ASMfreq1)
+
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(DIAmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_DIA == "Yes" ~ "DIAmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_DIA == "Yes" ~ "DIA_Poly"))
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(TEMmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_TEM == "Yes" ~ "TEMmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_TEM == "Yes" ~ "TEM_Poly"))
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(PRGmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_PRG == "Yes" ~ "PRGmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_PRG == "Yes" ~ "PRG_Poly"))
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(GABAmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_GABA == "Yes" ~ "GABAmono",
+                               ASMfreq1 == "None" ~ "Unexposed",
+                               ASMfreq1 == "Poly" & Prenatal1_GABA == "Yes" ~ "GABA_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(PRGmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_PRG == "Yes" ~ "PRGmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_PRG == "Yes" ~ "PRG_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(LCSmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_LCS == "Yes" ~ "LCSmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_LCS == "Yes" ~ "LCS_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(TPRmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_TPR == "Yes" ~ "TPRmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_TPR == "Yes" ~ "TPR_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(RTGmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_RTG == "Yes" ~ "RTGmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_RTG == "Yes" ~ "RTG_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(CBZmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_CBZ == "Yes" ~ "CBZmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_CBZ == "Yes" ~ "CBZ_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(LVTmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_LVT == "Yes" ~ "LVTmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_LVT == "Yes" ~ "LVT_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(LMTmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_LMT == "Yes" ~ "LMTmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_LMT == "Yes" ~ "LMT_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(CLZmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_CLZ == "Yes" ~ "CLZmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_CLZ == "Yes" ~ "CLZ_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(SVPmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_SVP == "Yes" ~ "SVPmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_SVP == "Yes" ~ "SVP_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(PHTmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_PHT == "Yes" ~ "PHTmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_PHT == "Yes" ~ "PHT_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(CLBmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_CLB == "Yes" ~ "CLBmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_CLB == "Yes" ~ "CLB_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(ZNSmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_ZNS == "Yes" ~ "ZNSmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_ZNS == "Yes" ~ "ZNS_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(PHBmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_PHB == "Yes" ~ "PHBmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_PHB == "Yes" ~ "PHB_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(OXCmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_OXC == "Yes" ~ "OXCmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_OXC == "Yes" ~ "OXC_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(BRVmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_BRV == "Yes" ~ "BRVmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_BRV == "Yes" ~ "BRV_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(ESLmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_ESL == "Yes" ~ "ESLmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_ESL == "Yes" ~ "ESL_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(TIAmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_TIA == "Yes" ~ "TIAmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_TIA == "Yes" ~ "TIA_Poly"))
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(ETHmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_ETH == "Yes" ~ "ETHmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_ETH == "Yes" ~ "ETH_Poly"))
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(VIGmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_VIG == "Yes" ~ "VIGmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_VIG == "Yes" ~ "VIG_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(PRPmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_PRP == "Yes" ~ "PRPmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_PRP == "Yes" ~ "PRP_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(PRMmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_PRM == "Yes" ~ "PRMmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_PRM == "Yes" ~ "PRM_Poly"))
+
+table(RO1_PIS3d_wide$GABAmono1)
+table(RO1_PIS3d_wide$PRGmono1)
+table(RO1_PIS3d_wide$LCSmono1)
+table(RO1_PIS3d_wide$TPRmono1)
+table(RO1_PIS3d_wide$CBZmono1)
+table(RO1_PIS3d_wide$LVTmono1)
+table(RO1_PIS3d_wide$LMTmono1)
+table(RO1_PIS3d_wide$RTGmono1)
+table(RO1_PIS3d_wide$CLZmono1)
+table(RO1_PIS3d_wide$SVPmono1)
+table(RO1_PIS3d_wide$PHTmono1)
+table(RO1_PIS3d_wide$CLBmono1)
+table(RO1_PIS3d_wide$PRPmono1)
+table(RO1_PIS3d_wide$ZNSmono1)
+table(RO1_PIS3d_wide$PHBmono1)
+table(RO1_PIS3d_wide$PRMmono1)
+table(RO1_PIS3d_wide$OXCmono1)
+table(RO1_PIS3d_wide$BRVmono1)
+table(RO1_PIS3d_wide$ESLmono1)
+table(RO1_PIS3d_wide$TIAmono1)
+table(RO1_PIS3d_wide$ETHmono1)
+table(RO1_PIS3d_wide$VIGmono1)
+
+
+RO1_PIS3d_wide$GABAmono1 <- as.factor(RO1_PIS3d_wide$GABAmono1)
+RO1_PIS3d_wide$PRGmono1 <- as.factor(RO1_PIS3d_wide$PRGmono1)
+RO1_PIS3d_wide$LCSmono1 <- as.factor(RO1_PIS3d_wide$LCSmono1)
+RO1_PIS3d_wide$TPRmono1 <- as.factor(RO1_PIS3d_wide$TPRmono1)
+RO1_PIS3d_wide$CBZmono1 <- as.factor(RO1_PIS3d_wide$CBZmono1)
+RO1_PIS3d_wide$LVTmono1 <- as.factor(RO1_PIS3d_wide$LVTmono1)
+RO1_PIS3d_wide$LMTmono1 <- as.factor(RO1_PIS3d_wide$LMTmono1)
+RO1_PIS3d_wide$RTGmono1 <- as.factor(RO1_PIS3d_wide$RTGmono1)
+RO1_PIS3d_wide$CLZmono1 <- as.factor(RO1_PIS3d_wide$CLZmono1)
+RO1_PIS3d_wide$SVPmono1 <- as.factor(RO1_PIS3d_wide$SVPmono1)
+RO1_PIS3d_wide$PHTmono1 <- as.factor(RO1_PIS3d_wide$PHTmono1)
+RO1_PIS3d_wide$CLBmono1 <- as.factor(RO1_PIS3d_wide$CLBmono1)
+RO1_PIS3d_wide$PRPmono1 <- as.factor(RO1_PIS3d_wide$PRPmono1)
+RO1_PIS3d_wide$ZNSmono1 <- as.factor(RO1_PIS3d_wide$ZNSmono1)
+RO1_PIS3d_wide$PHBmono1 <- as.factor(RO1_PIS3d_wide$PHBmono1)
+RO1_PIS3d_wide$PRMmono1 <- as.factor(RO1_PIS3d_wide$PRMmono1)
+RO1_PIS3d_wide$OXCmono1 <- as.factor(RO1_PIS3d_wide$OXCmono1)
+RO1_PIS3d_wide$BRVmono1 <- as.factor(RO1_PIS3d_wide$BRVmono1)
+RO1_PIS3d_wide$ESLmono1 <- as.factor(RO1_PIS3d_wide$ESLmono1)
+RO1_PIS3d_wide$TIAmono1 <- as.factor(RO1_PIS3d_wide$TIAmono1)
+RO1_PIS3d_wide$ETHmono1 <- as.factor(RO1_PIS3d_wide$ETHmono1)
+RO1_PIS3d_wide$VIGmono1 <- as.factor(RO1_PIS3d_wide$VIGmono1)
+
+##rejoin this ASM dataset to dataset before joining PIS.
+
+RO1_PIS3 <- left_join(RO1_0921, RO1_PIS3d_wide, by = "mother_id.x", keep = FALSE, multiple = "first", unmatched = "drop", relationship = "many-to-one")
+
+RO1_PIS3$AnyAsm1[is.na(RO1_PIS3$AnyAsm1)] <- "No"
+RO1_PIS3$AnyAsm4[is.na(RO1_PIS3$AnyAsm4)] <- "No"
+
+
+table(RO1_PIS3$EpilepsyCases2, RO1_PIS3$AnyAsm1)
+table(RO1_PIS3$EpilepsyCases2, RO1_PIS3$AnyAsm4)
+
+
+##relevel variables to opposite ref
+RO1_PIS3$AnyAsm1 <- relevel(RO1_PIS3$AnyAsm1, ref = "No")
+RO1_PIS3$AnyAsm4 <- relevel(RO1_PIS3$AnyAsm4, ref = "No")
+RO1_PIS3$Preexisting_DIABETES <- relevel(RO1_PIS3$Preexisting_DIABETES, ref = "Not_Preexisting")
+RO1_PIS3$GestationalDiabetes <- relevel(RO1_PIS3$GestationalDiabetes, ref = "No")
+RO1_PIS3$GestationalHypertension <- relevel(RO1_PIS3$GestationalHypertension, ref = "No_GestHyp")
+RO1_PIS3$Preeclampsia <- relevel(RO1_PIS3$Preeclampsia, ref = "No_Preeclampsia")
+RO1_PIS3$Eclampsia <- relevel(RO1_PIS3$Eclampsia, ref = "No_Eclampsia")
+RO1_PIS3$PPH <- relevel(RO1_PIS3$PPH, ref = "No_PPH")
+RO1_PIS3$PlacentaPraevia <- relevel(RO1_PIS3$PlacentaPraevia, ref = "No_PlacPrae")
+RO1_PIS3$PretermBirth <- relevel(RO1_PIS3$PretermBirth, ref = "No_Preterm")
+RO1_PIS3$PREVIOUS_SPONTANEOUS_ABORTIONS <- relevel(RO1_PIS3$PREVIOUS_SPONTANEOUS_ABORTIONS, ref = "No")
+
+RO1_PIS3$DIAmono1 <- as.factor(RO1_PIS3$DIAmono1)
+RO1_PIS3$TEMmono1 <- as.factor(RO1_PIS3$TEMmono1)
+RO1_PIS3$GABAmono1 <- as.factor(RO1_PIS3$GABAmono1)
+RO1_PIS3$PRGmono1 <- as.factor(RO1_PIS3$PRGmono1)
+RO1_PIS3$LCSmono1 <- as.factor(RO1_PIS3$LCSmono1)
+RO1_PIS3$TPRmono1 <- as.factor(RO1_PIS3$TPRmono1)
+RO1_PIS3$CBZmono1 <- as.factor(RO1_PIS3$CBZmono1)
+RO1_PIS3$LVTmono1 <- as.factor(RO1_PIS3$LVTmono1)
+RO1_PIS3$LMTmono1 <- as.factor(RO1_PIS3$LMTmono1)
+RO1_PIS3$RTGmono1 <- as.factor(RO1_PIS3$RTGmono1)
+RO1_PIS3$CLZmono1 <- as.factor(RO1_PIS3$CLZmono1)
+RO1_PIS3$SVPmono1 <- as.factor(RO1_PIS3$SVPmono1)
+RO1_PIS3$PHTmono1 <- as.factor(RO1_PIS3$PHTmono1)
+RO1_PIS3$CLBmono1 <- as.factor(RO1_PIS3$CLBmono1)
+RO1_PIS3$PRPmono1 <- as.factor(RO1_PIS3$PRPmono1)
+RO1_PIS3$ZNSmono1 <- as.factor(RO1_PIS3$ZNSmono1)
+RO1_PIS3$PHBmono1 <- as.factor(RO1_PIS3$PHBmono1)
+RO1_PIS3$OXCmono1 <- as.factor(RO1_PIS3$OXCmono1)
+RO1_PIS3$BRVmono1 <- as.factor(RO1_PIS3$BRVmono1)
+RO1_PIS3$ESLmono1 <- as.factor(RO1_PIS3$ESLmono1)
+RO1_PIS3$TIAmono1 <- as.factor(RO1_PIS3$TIAmono1)
+RO1_PIS3$ETHmono1 <- as.factor(RO1_PIS3$ETHmono1)
+RO1_PIS3$VIGmono1 <- as.factor(RO1_PIS3$VIGmono1)
+
+RO1_PIS3$DIAmono1 <- fct_na_value_to_level(RO1_PIS3$DIAmono1, level = "Unexposed")
+RO1_PIS3$GABAmono1 <- fct_na_value_to_level(RO1_PIS3$GABAmono1, level = "Unexposed")
+RO1_PIS3$PRGmono1 <- fct_na_value_to_level(RO1_PIS3$PRGmono1, level = "Unexposed")
+RO1_PIS3$LCSmono1 <- fct_na_value_to_level(RO1_PIS3$LCSmono1, level = "Unexposed")
+RO1_PIS3$TPRmono1 <- fct_na_value_to_level(RO1_PIS3$TPRmono1, level = "Unexposed")
+RO1_PIS3$CBZmono1 <- fct_na_value_to_level(RO1_PIS3$CBZmono1, level = "Unexposed")
+RO1_PIS3$LVTmono1 <- fct_na_value_to_level(RO1_PIS3$LVTmono1, level = "Unexposed")
+RO1_PIS3$LMTmono1 <- fct_na_value_to_level(RO1_PIS3$LMTmono1, level = "Unexposed")
+RO1_PIS3$RTGmono1 <- fct_na_value_to_level(RO1_PIS3$RTGmono1, level = "Unexposed")
+RO1_PIS3$CLZmono1 <- fct_na_value_to_level(RO1_PIS3$CLZmono1, level = "Unexposed")
+RO1_PIS3$SVPmono1 <- fct_na_value_to_level(RO1_PIS3$SVPmono1, level = "Unexposed")
+RO1_PIS3$PHTmono1 <- fct_na_value_to_level(RO1_PIS3$PHTmono1, level = "Unexposed")
+RO1_PIS3$CLBmono1 <- fct_na_value_to_level(RO1_PIS3$CLBmono1, level = "Unexposed")
+RO1_PIS3$PRPmono1 <- fct_na_value_to_level(RO1_PIS3$PRPmono1, level = "Unexposed")
+RO1_PIS3$ZNSmono1 <- fct_na_value_to_level(RO1_PIS3$ZNSmono1, level = "Unexposed")
+RO1_PIS3$PHBmono1 <- fct_na_value_to_level(RO1_PIS3$PHBmono1, level = "Unexposed")
+RO1_PIS3$PRMmono1 <- fct_na_value_to_level(RO1_PIS3$PRMmono1, level = "Unexposed")
+RO1_PIS3$OXCmono1 <- fct_na_value_to_level(RO1_PIS3$OXCmono1, level = "Unexposed")
+RO1_PIS3$BRVmono1 <- fct_na_value_to_level(RO1_PIS3$BRVmono1, level = "Unexposed")
+RO1_PIS3$ESLmono1 <- fct_na_value_to_level(RO1_PIS3$ESLmono1, level = "Unexposed")
+RO1_PIS3$TIAmono1 <- fct_na_value_to_level(RO1_PIS3$TIAmono1, level = "Unexposed")
+RO1_PIS3$ETHmono1 <- fct_na_value_to_level(RO1_PIS3$ETHmono1, level = "Unexposed")
+RO1_PIS3$VIGmono1 <- fct_na_value_to_level(RO1_PIS3$VIGmono1, level = "Unexposed")
+RO1_PIS3$TEMmono1 <- fct_na_value_to_level(RO1_PIS3$TEMmono1, level = "Unexposed")
+
+
+
+
+RO1_PIS3$DIAmono1 <- relevel(RO1_PIS3$DIAmono1, ref = "Unexposed")
+RO1_PIS3$TEMmono1 <- relevel(RO1_PIS3$TEMmono1, ref = "Unexposed")
+
+RO1_PIS3$GABAmono1 <- relevel(RO1_PIS3$GABAmono1, ref = "Unexposed")
+
+RO1_PIS3$PRGmono1 <- relevel(RO1_PIS3$PRGmono1, ref = "Unexposed")
+
+RO1_PIS3$LCSmono1 <- relevel(RO1_PIS3$LCSmono1, ref = "Unexposed")
+
+RO1_PIS3$TPRmono1 <- relevel(RO1_PIS3$TPRmono1, ref = "Unexposed")
+
+RO1_PIS3$CBZmono1 <- relevel(RO1_PIS3$CBZmono1, ref = "Unexposed")
+
+RO1_PIS3$LVTmono1 <- relevel(RO1_PIS3$LVTmono1, ref = "Unexposed")
+
+RO1_PIS3$LMTmono1 <- relevel(RO1_PIS3$LMTmono1, ref = "Unexposed")
+
+RO1_PIS3$RTGmono1 <- relevel(RO1_PIS3$RTGmono1, ref = "Unexposed")
+
+RO1_PIS3$CLZmono1 <- relevel(RO1_PIS3$CLZmono1, ref = "Unexposed")
+
+RO1_PIS3$SVPmono1 <- relevel(RO1_PIS3$SVPmono1, ref = "Unexposed")
+
+RO1_PIS3$PHTmono1 <- relevel(RO1_PIS3$PHTmono1, ref = "Unexposed")
+
+RO1_PIS3$CLBmono1 <- relevel(RO1_PIS3$CLBmono1, ref = "Unexposed")
+
+RO1_PIS3$PRPmono1 <- relevel(RO1_PIS3$PRPmono1, ref = "Unexposed")
+
+RO1_PIS3$ZNSmono1 <- relevel(RO1_PIS3$ZNSmono1, ref = "Unexposed")
+
+RO1_PIS3$PHBmono1 <- relevel(RO1_PIS3$PHBmono1, ref = "Unexposed")
+
+RO1_PIS3$OXCmono1 <- relevel(RO1_PIS3$OXCmono1, ref = "Unexposed")
+
+RO1_PIS3$BRVmono1 <- relevel(RO1_PIS3$BRVmono1, ref = "Unexposed")
+
+RO1_PIS3$ESLmono1 <- relevel(RO1_PIS3$ESLmono1, ref = "Unexposed")
+
+RO1_PIS3$TIAmono1 <- relevel(RO1_PIS3$TIAmono1, ref = "Unexposed")
+
+RO1_PIS3$ETHmono1 <- relevel(RO1_PIS3$ETHmono1, ref = "Unexposed")
+
+RO1_PIS3$VIGmono1 <- relevel(RO1_PIS3$VIGmono1, ref = "Unexposed")
+
+
+RO1_PIS3$Prenatal1 <- RO1_PIS3$DeliveryDate-365
+
+RO1_PIS3$DIAZEPAM <- as.numeric(unlist(RO1_PIS3$DIAZEPAM))
+
+RO1_PIS3$Prenatal1_DIA <- ifelse(RO1_PIS3$DIAZEPAM >= RO1_PIS3$Prenatal1 &
+                                   RO1_PIS3$DIAZEPAM <= RO1_PIS3$DeliveryDate,
+                                 "Yes", "No")
+table(RO1_PIS3$Prenatal1_DIA)
+
+check <- subset(RO1_PIS3, select = c("mother_id", "PregnancyNumber", "PregnancyEndDate", "DeliveryDate", "DIAZEPAM", "Prenatal1_DIA"))
+check$DIAZEPAM <- as.Date(check$DIAZEPAM)
+
+##now i need to define an estimated conception date so that I can
+##identify prenatal ASM exposure for each ASM
+
+##first lets create a variable to see how many observations do not have an estimated gestation
+RO1_PIS3$ESTGEST <- RO1_PIS3$ESTIMATED_GESTATION
+RO1_PIS3$ESTGEST[!is.na(RO1_PIS3$ESTGEST)] <- "Yes"
+RO1_PIS3$ESTGEST[is.na(RO1_PIS3$ESTGEST)] <- "No"
+levels(RO1_PIS3$ESTGEST)
+RO1_PIS3$ESTGEST <- as.factor(RO1_PIS3$ESTGEST)
+
+
+##Now I need to see if any admission dates are the same as pregnancy end dates for outcomes
+##so I'll subset the dataframe to include only variables of interest for this check
+
+RO1_PIS3check <- RO1_PIS3
+RO1_PIS3check <- subset(RO1_PIS3check,
+                        select = c(mother_id, PregnancyNumber, PregnancyEndDate,
+                                   ADMISSION_DATE, ESTIMATED_GESTATION, ESTGEST))
+
+##I need to find a way to create a prenatal period for ASM exposure.
+##I had used the delivery date-estimated gestation, but this doesn't work for
+##pregnancies not ending in a live or still birth as many do not have an estimated gestation.
+RO1_PIS3check2 <- RO1_PIS3
+
+assumed_gestation_booking <- 10
+assumed_gestation_lb <- 40
+assumed_gestation_sb <- 32
+assumed_gestation_miscarriage <- 10
+assumed_gestation_induced <- 16
+assumed_gestation_pd <- 40
+
+feasible_gestation_lb <- 16:44
+feasible_gestation_sb <- 24:44
+feasible_gestation_miscarriage <- 4:23
+feasible_gestation_induced <- 4:44
+feasible_gestation_pd <- 4:44
+
+
+RO1_PIS3check2 <- RO1_PIS3check2 %<>%
+  mutate(
+    feasible_gestation = case_when(
+      Livebirth == "Livebirth" &
+        ESTIMATED_GESTATION %in% c(feasible_gestation_lb) ~ T,
+      Stillbirth == "Stillbirth" &
+        ESTIMATED_GESTATION %in% c(feasible_gestation_sb) ~ T,
+      Miscarriage2 == "Miscarriage" &
+        ESTIMATED_GESTATION %in% c(feasible_gestation_miscarriage) ~ T,
+      Induced_Abortion == "Induced" &
+        ESTIMATED_GESTATION %in% c(feasible_gestation_induced) ~ T,
+      PerinatalDeaths == "Yes" &
+        ESTIMATED_GESTATION %in% c(feasible_gestation_pd) ~ T,
+      T ~ F
+    )
+  ) %>%
+  mutate(estimated_gestation  = case_when(feasible_gestation == T ~ ESTIMATED_GESTATION,
+                                          feasible_gestation == F & !is.na(PregnancyEndDate) & !is.na(ADMISSION_DATE)
+                                          ~ as.numeric(floor(difftime(PregnancyEndDate, ADMISSION_DATE, units = "weeks"))),
+                                          feasible_gestation == F & is.na(PregnancyEndDate) & !is.na(ADMISSION_DATE)
+                                          ~ as.numeric(floor(difftime(PregnancyEndDate, ADMISSION_DATE, units = "weeks"))))) %>%
+  mutate(
+    feasible_gestation = case_when(
+      Livebirth == "Livebirth" &
+        estimated_gestation %in% c(feasible_gestation_lb) ~ T,
+      Stillbirth == "Stillbirth" &
+        estimated_gestation %in% c(feasible_gestation_sb) ~ T,
+      Miscarriage2 == "Miscarriage" &
+        estimated_gestation %in% c(feasible_gestation_miscarriage) ~ T,
+      Induced_Abortion == "Induced" &
+        estimated_gestation %in% c(feasible_gestation_induced) ~ T,
+      PerinatalDeaths == "Yes" &
+        estimated_gestation %in% c(feasible_gestation_pd) ~ T,
+      T ~ F
+    )
+  )
+
+table(RO1_PIS3check2$EpilepsyCases, RO1_PIS3check2$feasible_gestation)
+table(RO1_PIS3check2$PerinatalDeaths, RO1_PIS3check2$feasible_gestation)
+
+##most non-feasible gestation are from induced abortion and miscarriage variables
+##decide what the estimated gestation is based on the outcome and apply a feasible gestation
+RO1_PIS3check2 %<>%
+  mutate(
+    estimated_gestation = case_when(
+      feasible_gestation == T ~ ESTIMATED_GESTATION,
+      feasible_gestation == F &
+        Livebirth == "Livebirth" ~ assumed_gestation_lb,
+      feasible_gestation == F &
+        Stillbirth == "Stillbirth" ~ assumed_gestation_sb,
+      feasible_gestation == F &
+        Induced_Abortion == "Induced" ~ assumed_gestation_induced,
+      feasible_gestation == F &
+        Miscarriage2 == "Miscarriage" ~ assumed_gestation_miscarriage,
+      feasible_gestation == F &
+        PerinatalDeaths == "Yes" ~ assumed_gestation_pd,
+      T ~ ESTIMATED_GESTATION
+    )
+  ) %>%
+  mutate(
+    estimated_conception_date = case_when(
+      Livebirth == "Livebirth" ~ PregnancyEndDate - (weeks(estimated_gestation) - weeks(2)),
+      Stillbirth == "Stillbirth" ~ PregnancyEndDate - (weeks(estimated_gestation) - weeks(2)),
+      Induced_Abortion == "Induced" ~ PregnancyEndDate - (weeks(estimated_gestation) - weeks(2)),
+      Miscarriage2 == "Miscarriage" ~ PregnancyEndDate - (weeks(estimated_gestation) - weeks(2)),
+      PerinatalDeaths == "Yes" ~ PregnancyEndDate - (weeks(estimated_gestation) - weeks(2)),
+    )
+  ) %>%
+  mutate(pregnancy_end_date = if_else(
+    !is.na(PregnancyEndDate),
+    PregnancyEndDate,
+    ADMISSION_DATE
+  ))
+
+
+##check to see outcome variables and gestational dates
+RO1_PIS3check3 <- subset(RO1_PIS3check2, select = c(
+  mother_id, PregnancyNumber, feasible_gestation, Induced_Abortion,
+  Miscarriage2, PerinatalDeaths, Livebirth, Stillbirth, ADMISSION_DATE,
+  PregnancyEndDate, ESTIMATED_GESTATION, estimated_gestation,
+  estimated_conception_date, pregnancy_end_date))
+
+
+##Now I need to create a prenatal epilepsy record for SMR01 and combine with SMR02
+##epilepsy cases to create a new epilepsy record of epilepsy during pregnancy
+SMR01test_epad <- subset(SMR01test, select = c("mother_id", "EpilepsyAdmissionDate"))
+RO1_PIS3check2a <- subset(RO1_PIS3check2, select = c(-EpilepsyAdmissionDate))
+RO1_PIS3check2a <- left_join(RO1_PIS3check2a, SMR01test_epad, by = c("mother_id"), keep = FALSE, multiple = "all", unmatched = "drop", relationship = "many-to-many")
+
+
+RO1_PIS3check2b <- RO1_PIS3check2a %>%
+  distinct(mother_id, PregnancyNumber, EpilepsyAdmissionDate, .keep_all = TRUE)
+
+RO1_PIS3check2b$Prenatal1 <- RO1_PIS3check2b$estimated_conception_date-720
+
+is.Date(RO1_PIS3check2b$PregnancyEndDate)
+is.Date(RO1_PIS3check2b$estimated_conception_date)
+is.Date(RO1_PIS3check2b$Prenatal1)
+
+comparison2 <- function(x, y, z) {
+  case_when(is.na(z) ~ NA_character_,
+            z >= x & z <= y |
+              is.na(x) & y == z |
+              is.na(y) & x == z ~ 'PrenatalEpilepsy',
+            TRUE ~ 'No_PrenatalEpilepsy')
+}
+
+
+RO1_PIS3check2b <- RO1_PIS3check2b %>%
+  mutate(PrenatalEpilepsySMR01 = comparison2(Prenatal1, PregnancyEndDate, EpilepsyAdmissionDate))
+
+RO1_PIS3check2b$PrenatalEpilepsySMR01 <- as.factor(RO1_PIS3check2b$PrenatalEpilepsySMR01)
+
+table(RO1_PIS3check2b$PrenatalEpilepsySMR01)
+
+##now subset to include only mother_id pregnancy number and prenatal epilepsy records
+
+RO1_PIS3check2b <- subset(RO1_PIS3check2b, select = c("mother_id", "PregnancyNumber", "PrenatalEpilepsySMR01"))
+
+RO1_PIS3check2b <- RO1_PIS3check2b %>%
+  distinct(mother_id, PregnancyNumber, PrenatalEpilepsySMR01, .keep_all = TRUE)
+
+table(RO1_PIS3check2b$PrenatalEpilepsySMR01)
+
+##now rejoin to RO1_PIS3_CHECK2 and combine epilepsy to create epilepsycases2
+RO1_PIS3check3 <- left_join(RO1_PIS3check2, RO1_PIS3check2b, by = c("mother_id", "PregnancyNumber"), keep = FALSE, multiple = "first", unmatched = "drop", relationship = "one-to-one")
+
+table(RO1_PIS3check3$PrenatalEpilepsySMR01)
+table(RO1_PIS3check3$EpilepsyCases)
+
+RO1_PIS3check2 <- RO1_PIS3check3
+
+RO1_PIS3check2 <- RO1_PIS3check2 %>%
+  mutate(EpilepsyCases2 = case_when(EpilepsyCases == "Epilepsy" ~ "Epilepsy",
+                                    PrenatalEpilepsySMR01 == "PrenatalEpilepsy" ~ "Epilepsy",
+                                    TRUE ~ "No_Epilepsy"))
+
+RO1_PIS3check2$EpilepsyCases2 <- fct_other(RO1_PIS3check2$EpilepsyCases2, keep = 'Epilepsy', other_level = 'No_Epilepsy')
+
+table(RO1_PIS3check2$EpilepsyCases2)
+
+
+#######
+##Now I need to merge the SMR11SBRSMRO1child with ResearchQuestion1
+##and assign neonatal outcomes to pregnancies using date of birth on cohort file  
+
+RQ1_cohort <- left_join(RO1_PIS3check2, Cohort2, by = c("mother_id", "DeliveryDate"), keep = FALSE, multiple = "first", unmatched = "drop", relationship = "many-to-one")
+
+
+RQ1_cohort_check <- subset(RQ1_cohort, select = c("mother_id", "child_id", "DeliveryDate", "PregnancyNumber"))
+
+RQ1 <- left_join(RQ1_cohort, SMR11SBRSMR01, by = "child_id", keep = FALSE, multiple = "all", unmatched = "drop", relationship = "many-to-many")
+
+table(RQ1$EpilepsyCases2, RQ1$CongenitalConditions)
+
+RQ1$CongenitalConditions[is.na(RQ1$CongenitalConditions)] <- "No_CongenitalConditions"
+
+table(RQ1$EpilepsyCases2, RQ1$CongenitalConditions)
+table(InfantDeaths2$InfantDeaths)
+
+##now add infant deaths
+RQ1_combined <- left_join(RQ1, InfantDeaths2, by = "child_id", keep = FALSE, multiple = "first", unmatched = "drop", relationship = "many-to-one")
+RQ1_combined$InfantDeaths <- as.character(RQ1_combined$InfantDeaths)
+RQ1_combined$InfantDeaths <- RQ1_combined$InfantDeaths %>% replace_na("No_InfantDeath")
+RQ1_combined$InfantDeaths <- as.factor(RQ1_combined$InfantDeaths)
+table(RQ1_combined$InfantDeaths)
+
+
+RQ1_combined$InfantDeaths <- relevel(RQ1_combined$InfantDeaths, ref = "No_InfantDeath")
+
+RQ1_combined <- RQ1_combined %>%
+  mutate(N_I_Death = case_when(InfantDeaths == "InfantDeath" ~ "N_I_Death",
+                               Early_NeonatalDeath == "Early_NeonatalDeath" ~ "N_I_Death",
+                               Late_NeonatalDeath == "Late_NeonatalDeath" ~ "N_I_Death",
+                               PostNeonatalDeath == "Post_NeonatalDeath" ~ "N_I_Death",
+                               TRUE ~ "No_N_I_Death"))
+
+
+table(RQ1_combined$EpilepsyCases2, RQ1_combined$InfantDeaths)
+
+
+RQ1_combined <- RQ1_combined %>%
+  mutate(LBW = case_when(LBW.x == "LBW" ~ "LBW",
+                         LBW.y == "LBW" ~ "LBW",
+                         TRUE ~ "No_LBW"))
+
+RQ1_combined <- RQ1_combined %>%
+  mutate(Apgar_5_Min, case_when(Apgar_5_Min == "Apgar<7" ~ "Apgar<7",
+                                APGAR_5_MINUTES == "SevenandUnderandRR" ~ "Apgar<7",
+                                TRUE ~ "No_Apgar<7"))
+
+
+##I need to make sure that the children are being assigned to the correct pregnancy
+##based on birth date on cohort file and date of delivery on RQ1_cohort
+RQ1_combined_check <- subset(RQ1_combined, select = c("mother_id", "child_id", "DeliveryDate"))
+
+##okay that is all correct. I now have my dataframe of maternal, foetal, neonatal outcomes
+##Now I can rename my dataframe to RO1_PIS3 to fall in line with the rest of the code
+
+RO1_PIS3 <- RQ1_combined
+
+
+RO1_PIS_check <- left_join(RO1_PIS3, RO1_PIS2, by = "mother_id", keep = FALSE, multiple = "first", unmatched = "drop", relationship = "many-to-one")
+
+RO1_PIS_check <- subset(RO1_PIS_check,
+                        select = c("mother_id", "paid_date", "prescribed_date",
+                                   "dispensed_date", "approved_name", "prescribable_item_name",
+                                   "item_strength", "item_strength_uom", "formulation_code",
+                                   "bnf_code", "daily_dose_conversion", "paid_no_items",
+                                   "paid_quantity", "date_dispensed"))
+
+RO1_PIS_check2 <- left_join(RO1_PIS3, RO1_PIS_check, by = "mother_id", keep = FALSE, multiple = "first", unmatched = "drop", relationship = "many-to-one")
+
+
+###START HERE AGAIN to join RO1_PIS3 with PIS data and create prenatal var
+RO1_PIS <- left_join(RO1_PIS3, PISMother2, by = "mother_id", keep = FALSE, multiple = "all", unmatched = "drop", relationship = "many-to-many")
+
+RO1_PIS2 <- RO1_PIS %>%
+  distinct(mother_id, PregnancyNumber, approved_name, date_dispensed, .keep_all = TRUE)
+
+
+RO1_PIS3 <- RO1_PIS2
+
+RO1_PIS3$Prenatal1 <- RO1_PIS3$estimated_conception_date-31
+RO1_PIS3$Prenatal2 <- RO1_PIS3$estimated_conception_date-92
+RO1_PIS3$Prenatal3 <- RO1_PIS3$estimated_conception_date-153
+
+
+##identify prenatal ASM exposure for each ASM
+comparison <- function(x, y, z) {
+  case_when(is.na(z) ~ NA_character_,
+            z >= x & z <= y |
+              is.na(x) & y == z |
+              is.na(y) & x == z ~ 'within',
+            z > x & z > y ~ 'above',
+            TRUE ~ 'below')
+}
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal_ASM = comparison(Prenatal1, pregnancy_end_date, date_dispensed))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_GABA = case_when(Prenatal_ASM == "within" & approved_name == "GABAPENTIN" ~ "Yes",  
+                                    TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_PRG = case_when(Prenatal_ASM == "within" & approved_name == "PREGABALIN" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_LCS = case_when(Prenatal_ASM == "within" & approved_name == "LACOSAMIDE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_TPR = case_when(Prenatal_ASM == "within" & approved_name == "TOPIRAMATE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_CBZ = case_when(Prenatal_ASM == "within" & approved_name == "CARBAMAZEPINE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_LVT = case_when(Prenatal_ASM == "within" & approved_name == "LEVETIRACETAM" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_LMT = case_when(Prenatal_ASM == "within" & approved_name == "LAMOTRIGINE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_RTG = case_when(Prenatal_ASM == "within" & approved_name == "RETIGABINE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_CLZ = case_when(Prenatal_ASM == "within" & approved_name == "CLONAZEPAM" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_SVP = case_when(Prenatal_ASM == "within" & approved_name == "SODIUM VALPROATE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_PHT = case_when(Prenatal_ASM == "within" & approved_name == "PHENYTOIN" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_CLB = case_when(Prenatal_ASM == "within" & approved_name == "CLOBAZAM" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_PRP = case_when(Prenatal_ASM == "within" & approved_name == "PERAMPANEL" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_ZNS = case_when(Prenatal_ASM == "within" & approved_name == "ZONISAMIDE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_PHB = case_when(Prenatal_ASM == "within" & approved_name == "PHENOBARBITAL" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_PRM = case_when(Prenatal_ASM == "within" & approved_name == "PRIMIDONE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_OXC = case_when(Prenatal_ASM == "within" & approved_name == "OXCARBAZEPINE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_BRV = case_when(Prenatal_ASM == "within" & approved_name == "BRIVARACETAM" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_ESL = case_when(Prenatal_ASM == "within" & approved_name == "ESLICARBAZEPINE" ~ "Yes",
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_TIA = case_when(Prenatal_ASM == "within" & approved_name == "TIAGABINE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_ETH = case_when(Prenatal_ASM == "within" & approved_name == "ETHOSUXIMIDE" ~ "Yes",
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_VIG = case_when(Prenatal_ASM == "within" & approved_name == "VIGABATRIN" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_DIA = case_when(Prenatal_ASM == "within" & approved_name == "DIAZEPAM" ~ "Yes",
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_LOR = case_when(Prenatal_ASM == "within" & approved_name == "LORAZEPAM" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_MID = case_when(Prenatal_ASM == "within" & approved_name == "MIDAZOLAM HYDROCHLORIDE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_NIT = case_when(Prenatal_ASM == "within" & approved_name == "NITRAZEPAM" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_PIR = case_when(Prenatal_ASM == "within" & approved_name == "PIRACETAM" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal1_TEM = case_when(Prenatal_ASM == "within" & approved_name == "TEMAZEPAM" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+
+
+
+RO1_PIS3$Prenatal1_DIA <- as.factor(RO1_PIS3$Prenatal1_DIA)
+
+RO1_PIS3$Prenatal1_LOR <- as.factor(RO1_PIS3$Prenatal1_LOR)
+
+RO1_PIS3$Prenatal1_MID <- as.factor(RO1_PIS3$Prenatal1_MID)
+
+RO1_PIS3$Prenatal1_NIT <- as.factor(RO1_PIS3$Prenatal1_NIT)
+
+RO1_PIS3$Prenatal1_PIR <- as.factor(RO1_PIS3$Prenatal1_PIR)
+
+RO1_PIS3$Prenatal1_TEM <- as.factor(RO1_PIS3$Prenatal1_TEM)
+
+RO1_PIS3$Prenatal1_GABA <- as.factor(RO1_PIS3$Prenatal1_GABA)
+
+RO1_PIS3$Prenatal1_PRG <- as.factor(RO1_PIS3$Prenatal1_PRG)
+
+RO1_PIS3$Prenatal1_LCS <- as.factor(RO1_PIS3$Prenatal1_LCS)
+
+RO1_PIS3$Prenatal1_TPR <- as.factor(RO1_PIS3$Prenatal1_TPR)
+
+RO1_PIS3$Prenatal1_CBZ <- as.factor(RO1_PIS3$Prenatal1_CBZ)
+
+RO1_PIS3$Prenatal1_LVT <- as.factor(RO1_PIS3$Prenatal1_LVT)
+
+RO1_PIS3$Prenatal1_LMT <- as.factor(RO1_PIS3$Prenatal1_LMT)
+
+RO1_PIS3$Prenatal1_RTG <- as.factor(RO1_PIS3$Prenatal1_RTG)
+
+RO1_PIS3$Prenatal1_CLZ <- as.factor(RO1_PIS3$Prenatal1_CLZ)
+
+RO1_PIS3$Prenatal1_SVP <- as.factor(RO1_PIS3$Prenatal1_SVP)
+
+RO1_PIS3$Prenatal1_PHT <- as.factor(RO1_PIS3$Prenatal1_PHT)
+
+RO1_PIS3$Prenatal1_CLB <- as.factor(RO1_PIS3$Prenatal1_CLB)
+
+RO1_PIS3$Prenatal1_PRP <- as.factor(RO1_PIS3$Prenatal1_PRP)
+
+RO1_PIS3$Prenatal1_ZNS <- as.factor(RO1_PIS3$Prenatal1_ZNS)
+
+RO1_PIS3$Prenatal1_PHB <- as.factor(RO1_PIS3$Prenatal1_PHB)
+
+RO1_PIS3$Prenatal1_PRM <- as.factor(RO1_PIS3$Prenatal1_PRM)
+
+RO1_PIS3$Prenatal1_OXC <- as.factor(RO1_PIS3$Prenatal1_OXC)
+
+RO1_PIS3$Prenatal1_BRV <- as.factor(RO1_PIS3$Prenatal1_BRV)
+
+RO1_PIS3$Prenatal1_ESL <- as.factor(RO1_PIS3$Prenatal1_ESL)
+
+RO1_PIS3$Prenatal1_TIA <- as.factor(RO1_PIS3$Prenatal1_TIA)
+
+RO1_PIS3$Prenatal1_ETH <- as.factor(RO1_PIS3$Prenatal1_ETH)
+
+RO1_PIS3$Prenatal1_VIG <- as.factor(RO1_PIS3$Prenatal1_VIG)
+
+
+table(RO1_PIS3$Prenatal1_DIA)
+table(RO1_PIS3$Prenatal1_TEM)
+table(RO1_PIS3$Prenatal1_PRG)
+table(RO1_PIS3$Prenatal1_GABA)
+
+##Now create AnyAsm2 which extends the prenatl period by 3 months
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal_ASM2 = comparison(Prenatal2, pregnancy_end_date, date_dispensed))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal2_GABA = case_when(Prenatal_ASM2 == "within" & approved_name == "GABAPENTIN" ~ "Yes",  
+                                    TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal2_PRG = case_when(Prenatal_ASM2 == "within" & approved_name == "PREGABALIN" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal2_LCS = case_when(Prenatal_ASM2 == "within" & approved_name == "LACOSAMIDE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal2_TPR2 = case_when(Prenatal_ASM2 == "within" & approved_name == "TOPIRAMATE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal2_CBZ = case_when(Prenatal_ASM2 == "within" & approved_name == "CARBAMAZEPINE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal2_LVT = case_when(Prenatal_ASM2 == "within" & approved_name == "LEVETIRACETAM" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal2_LMT = case_when(Prenatal_ASM2 == "within" & approved_name == "LAMOTRIGINE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal2_RTG = case_when(Prenatal_ASM2 == "within" & approved_name == "RETIGABINE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal2_CLZ = case_when(Prenatal_ASM2 == "within" & approved_name == "CLONAZEPAM" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal2_SVP = case_when(Prenatal_ASM2 == "within" & approved_name == "SODIUM VALPROATE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal2_PHT = case_when(Prenatal_ASM2 == "within" & approved_name == "PHENYTOIN" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal2_CLB = case_when(Prenatal_ASM2 == "within" & approved_name == "CLOBAZAM" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal2_PRP = case_when(Prenatal_ASM2 == "within" & approved_name == "PERAMPANEL" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal2_ZNS = case_when(Prenatal_ASM2 == "within" & approved_name == "ZONISAMIDE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal2_PHB = case_when(Prenatal_ASM2 == "within" & approved_name == "PHENOBARBITAL" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal2_PRM = case_when(Prenatal_ASM2 == "within" & approved_name == "PRIMIDONE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal2_OXC = case_when(Prenatal_ASM2 == "within" & approved_name == "OXCARBAZEPINE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal2_BRV = case_when(Prenatal_ASM2 == "within" & approved_name == "BRIVARACETAM" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal2_ESL = case_when(Prenatal_ASM2 == "within" & approved_name == "ESLICARBAZEPINE" ~ "Yes",
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal2_TIA = case_when(Prenatal_ASM2 == "within" & approved_name == "TIAGABINE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal2_ETH = case_when(Prenatal_ASM2 == "within" & approved_name == "ETHOSUXIMIDE" ~ "Yes",
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal2_VIG = case_when(Prenatal_ASM2 == "within" & approved_name == "VIGABATRIN" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal2_DIA = case_when(Prenatal_ASM2 == "within" & approved_name == "DIAZEPAM" ~ "Yes",
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal2_LOR = case_when(Prenatal_ASM2 == "within" & approved_name == "LORAZEPAM" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal2_MID = case_when(Prenatal_ASM2 == "within" & approved_name == "MIDAZOLAM HYDROCHLORIDE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal2_NIT = case_when(Prenatal_ASM2 == "within" & approved_name == "NITRAZEPAM" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal2_PIR = case_when(Prenatal_ASM2 == "within" & approved_name == "PIRACETAM" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal2_TEM = case_when(Prenatal_ASM2 == "within" & approved_name == "TEMAZEPAM" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+
+
+
+RO1_PIS3$Prenatal2_DIA <- as.factor(RO1_PIS3$Prenatal2_DIA)
+
+RO1_PIS3$Prenatal2_LOR <- as.factor(RO1_PIS3$Prenatal2_LOR)
+
+RO1_PIS3$Prenatal2_MID <- as.factor(RO1_PIS3$Prenatal2_MID)
+
+RO1_PIS3$Prenatal2_NIT <- as.factor(RO1_PIS3$Prenatal2_NIT)
+
+RO1_PIS3$Prenatal2_PIR <- as.factor(RO1_PIS3$Prenatal2_PIR)
+
+RO1_PIS3$Prenatal2_TEM <- as.factor(RO1_PIS3$Prenatal2_TEM)
+
+RO1_PIS3$Prenatal2_GABA <- as.factor(RO1_PIS3$Prenatal2_GABA)
+
+RO1_PIS3$Prenatal2_PRG <- as.factor(RO1_PIS3$Prenatal2_PRG)
+
+RO1_PIS3$Prenatal2_LCS <- as.factor(RO1_PIS3$Prenatal2_LCS)
+
+RO1_PIS3$Prenatal2_TPR <- as.factor(RO1_PIS3$Prenatal2_TPR)
+
+RO1_PIS3$Prenatal2_CBZ <- as.factor(RO1_PIS3$Prenatal2_CBZ)
+
+RO1_PIS3$Prenatal2_LVT <- as.factor(RO1_PIS3$Prenatal2_LVT)
+
+RO1_PIS3$Prenatal2_LMT <- as.factor(RO1_PIS3$Prenatal2_LMT)
+
+RO1_PIS3$Prenatal2_RTG <- as.factor(RO1_PIS3$Prenatal2_RTG)
+
+RO1_PIS3$Prenatal2_CLZ <- as.factor(RO1_PIS3$Prenatal2_CLZ)
+
+RO1_PIS3$Prenatal2_SVP <- as.factor(RO1_PIS3$Prenatal2_SVP)
+
+RO1_PIS3$Prenatal2_PHT <- as.factor(RO1_PIS3$Prenatal2_PHT)
+
+RO1_PIS3$Prenatal2_CLB <- as.factor(RO1_PIS3$Prenatal2_CLB)
+
+RO1_PIS3$Prenatal2_PRP <- as.factor(RO1_PIS3$Prenatal2_PRP)
+
+RO1_PIS3$Prenatal2_ZNS <- as.factor(RO1_PIS3$Prenatal2_ZNS)
+
+RO1_PIS3$Prenatal2_PHB <- as.factor(RO1_PIS3$Prenatal2_PHB)
+
+RO1_PIS3$Prenatal2_PRM <- as.factor(RO1_PIS3$Prenatal2_PRM)
+
+RO1_PIS3$Prenatal2_OXC <- as.factor(RO1_PIS3$Prenatal2_OXC)
+
+RO1_PIS3$Prenatal2_BRV <- as.factor(RO1_PIS3$Prenatal2_BRV)
+
+RO1_PIS3$Prenatal2_ESL <- as.factor(RO1_PIS3$Prenatal2_ESL)
+
+RO1_PIS3$Prenatal2_TIA <- as.factor(RO1_PIS3$Prenatal2_TIA)
+
+RO1_PIS3$Prenatal2_ETH <- as.factor(RO1_PIS3$Prenatal2_ETH)
+
+RO1_PIS3$Prenatal2_VIG <- as.factor(RO1_PIS3$Prenatal2_VIG)
+
+
+##Now create AnyAsm3 which extends the prenatl period by 6 months
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal_ASM3 = comparison(Prenatal3, pregnancy_end_date, date_dispensed))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal3_GABA = case_when(Prenatal_ASM3 == "within" & approved_name == "GABAPENTIN" ~ "Yes",  
+                                    TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal3_PRG = case_when(Prenatal_ASM3 == "within" & approved_name == "PREGABALIN" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal3_LCS = case_when(Prenatal_ASM3 == "within" & approved_name == "LACOSAMIDE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal3_TPR2 = case_when(Prenatal_ASM3 == "within" & approved_name == "TOPIRAMATE" ~ "Yes",  
+                                    TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal3_CBZ = case_when(Prenatal_ASM3 == "within" & approved_name == "CARBAMAZEPINE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal3_LVT = case_when(Prenatal_ASM3 == "within" & approved_name == "LEVETIRACETAM" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal3_LMT = case_when(Prenatal_ASM3 == "within" & approved_name == "LAMOTRIGINE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal3_RTG = case_when(Prenatal_ASM3 == "within" & approved_name == "RETIGABINE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal3_CLZ = case_when(Prenatal_ASM3 == "within" & approved_name == "CLONAZEPAM" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal3_SVP = case_when(Prenatal_ASM3 == "within" & approved_name == "SODIUM VALPROATE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal3_PHT = case_when(Prenatal_ASM3 == "within" & approved_name == "PHENYTOIN" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal3_CLB = case_when(Prenatal_ASM3 == "within" & approved_name == "CLOBAZAM" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal3_PRP = case_when(Prenatal_ASM3 == "within" & approved_name == "PERAMPANEL" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal3_ZNS = case_when(Prenatal_ASM3 == "within" & approved_name == "ZONISAMIDE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal3_PHB = case_when(Prenatal_ASM3 == "within" & approved_name == "PHENOBARBITAL" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal3_PRM = case_when(Prenatal_ASM3 == "within" & approved_name == "PRIMIDONE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal3_OXC = case_when(Prenatal_ASM3 == "within" & approved_name == "OXCARBAZEPINE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal3_BRV = case_when(Prenatal_ASM3 == "within" & approved_name == "BRIVARACETAM" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal3_ESL = case_when(Prenatal_ASM3 == "within" & approved_name == "ESLICARBAZEPINE" ~ "Yes",
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal3_TIA = case_when(Prenatal_ASM3 == "within" & approved_name == "TIAGABINE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal3_ETH = case_when(Prenatal_ASM3 == "within" & approved_name == "ETHOSUXIMIDE" ~ "Yes",
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal3_VIG = case_when(Prenatal_ASM3 == "within" & approved_name == "VIGABATRIN" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal3_DIA = case_when(Prenatal_ASM3 == "within" & approved_name == "DIAZEPAM" ~ "Yes",
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal3_LOR = case_when(Prenatal_ASM3 == "within" & approved_name == "LORAZEPAM" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal3_MID = case_when(Prenatal_ASM3 == "within" & approved_name == "MIDAZOLAM HYDROCHLORIDE" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal3_NIT = case_when(Prenatal_ASM3 == "within" & approved_name == "NITRAZEPAM" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal3_PIR = case_when(Prenatal_ASM3 == "within" & approved_name == "PIRACETAM" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(Prenatal3_TEM = case_when(Prenatal_ASM3 == "within" & approved_name == "TEMAZEPAM" ~ "Yes",  
+                                   TRUE ~ "No"))
+
+
+
+
+RO1_PIS3$Prenatal3_DIA <- as.factor(RO1_PIS3$Prenatal3_DIA)
+
+RO1_PIS3$Prenatal3_LOR <- as.factor(RO1_PIS3$Prenatal3_LOR)
+
+RO1_PIS3$Prenatal3_MID <- as.factor(RO1_PIS3$Prenatal3_MID)
+
+RO1_PIS3$Prenatal3_NIT <- as.factor(RO1_PIS3$Prenatal3_NIT)
+
+RO1_PIS3$Prenatal3_PIR <- as.factor(RO1_PIS3$Prenatal3_PIR)
+
+RO1_PIS3$Prenatal3_TEM <- as.factor(RO1_PIS3$Prenatal3_TEM)
+
+RO1_PIS3$Prenatal3_GABA <- as.factor(RO1_PIS3$Prenatal3_GABA)
+
+RO1_PIS3$Prenatal3_PRG <- as.factor(RO1_PIS3$Prenatal3_PRG)
+
+RO1_PIS3$Prenatal3_LCS <- as.factor(RO1_PIS3$Prenatal3_LCS)
+
+RO1_PIS3$Prenatal3_TPR <- as.factor(RO1_PIS3$Prenatal3_TPR)
+
+RO1_PIS3$Prenatal3_CBZ <- as.factor(RO1_PIS3$Prenatal3_CBZ)
+
+RO1_PIS3$Prenatal3_LVT <- as.factor(RO1_PIS3$Prenatal3_LVT)
+
+RO1_PIS3$Prenatal3_LMT <- as.factor(RO1_PIS3$Prenatal3_LMT)
+
+RO1_PIS3$Prenatal3_RTG <- as.factor(RO1_PIS3$Prenatal3_RTG)
+
+RO1_PIS3$Prenatal3_CLZ <- as.factor(RO1_PIS3$Prenatal3_CLZ)
+
+RO1_PIS3$Prenatal3_SVP <- as.factor(RO1_PIS3$Prenatal3_SVP)
+
+RO1_PIS3$Prenatal3_PHT <- as.factor(RO1_PIS3$Prenatal3_PHT)
+
+RO1_PIS3$Prenatal3_CLB <- as.factor(RO1_PIS3$Prenatal3_CLB)
+
+RO1_PIS3$Prenatal3_PRP <- as.factor(RO1_PIS3$Prenatal3_PRP)
+
+RO1_PIS3$Prenatal3_ZNS <- as.factor(RO1_PIS3$Prenatal3_ZNS)
+
+RO1_PIS3$Prenatal3_PHB <- as.factor(RO1_PIS3$Prenatal3_PHB)
+
+RO1_PIS3$Prenatal3_PRM <- as.factor(RO1_PIS3$Prenatal3_PRM)
+
+RO1_PIS3$Prenatal3_OXC <- as.factor(RO1_PIS3$Prenatal3_OXC)
+
+RO1_PIS3$Prenatal3_BRV <- as.factor(RO1_PIS3$Prenatal3_BRV)
+
+RO1_PIS3$Prenatal3_ESL <- as.factor(RO1_PIS3$Prenatal3_ESL)
+
+RO1_PIS3$Prenatal3_TIA <- as.factor(RO1_PIS3$Prenatal3_TIA)
+
+RO1_PIS3$Prenatal3_ETH <- as.factor(RO1_PIS3$Prenatal3_ETH)
+
+RO1_PIS3$Prenatal3_VIG <- as.factor(RO1_PIS3$Prenatal3_VIG)
+
+##code ASM exposure as Any ASM exposure
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(AnyAsm1 = case_when(Prenatal1_DIA == "Yes" |
+                               Prenatal1_LOR == "Yes" |
+                               Prenatal1_MID == "Yes" |
+                               Prenatal1_NIT == "Yes" |
+                               Prenatal1_PIR == "Yes" |
+                               Prenatal1_TEM == "Yes" |
+                               Prenatal1_GABA == "Yes" |
+                               Prenatal1_PRG == "Yes" |
+                               Prenatal1_LCS == "Yes" |
+                               Prenatal1_TPR == "Yes" |
+                               Prenatal1_CBZ == "Yes" |
+                               Prenatal1_LVT == "Yes" |
+                               Prenatal1_LMT == "Yes" |
+                               Prenatal1_RTG == "Yes" |
+                               Prenatal1_CLZ == "Yes" |
+                               Prenatal1_SVP == "Yes" |
+                               Prenatal1_PHT == "Yes" |
+                               Prenatal1_CLB == "Yes" |
+                               Prenatal1_PRP == "Yes" |
+                               Prenatal1_ZNS == "Yes" |
+                               Prenatal1_PHB == "Yes" |
+                               Prenatal1_PRM == "Yes" |
+                               Prenatal1_OXC == "Yes" |
+                               Prenatal1_BRV == "Yes" |
+                               Prenatal1_ESL == "Yes" |
+                               Prenatal1_TIA == "Yes" |
+                               Prenatal1_ETH == "Yes" |
+                               Prenatal1_VIG == "Yes" ~ "Yes",
+                             TRUE ~ "No"))
+
+RO1_PIS3$AnyAsm1 <- fct_other(RO1_PIS3$AnyAsm1, keep = "Yes", other_level = "No")
+
+##code ASM exposure as Any ASM exposure extended 3 months
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(AnyAsm2 = case_when(Prenatal2_DIA == "Yes" |
+                               Prenatal2_LOR == "Yes" |
+                               Prenatal2_MID == "Yes" |
+                               Prenatal2_NIT == "Yes" |
+                               Prenatal2_PIR == "Yes" |
+                               Prenatal2_TEM == "Yes" |
+                               Prenatal2_GABA == "Yes" |
+                               Prenatal2_PRG == "Yes" |
+                               Prenatal2_LCS == "Yes" |
+                               Prenatal2_TPR == "Yes" |
+                               Prenatal2_CBZ == "Yes" |
+                               Prenatal2_LVT == "Yes" |
+                               Prenatal2_LMT == "Yes" |
+                               Prenatal2_RTG == "Yes" |
+                               Prenatal2_CLZ == "Yes" |
+                               Prenatal2_SVP == "Yes" |
+                               Prenatal2_PHT == "Yes" |
+                               Prenatal2_CLB == "Yes" |
+                               Prenatal2_PRP == "Yes" |
+                               Prenatal2_ZNS == "Yes" |
+                               Prenatal2_PHB == "Yes" |
+                               Prenatal2_PRM == "Yes" |
+                               Prenatal2_OXC == "Yes" |
+                               Prenatal2_BRV == "Yes" |
+                               Prenatal2_ESL == "Yes" |
+                               Prenatal2_TIA == "Yes" |
+                               Prenatal2_ETH == "Yes" |
+                               Prenatal2_VIG == "Yes" ~ "Yes",
+                             TRUE ~ "No"))
+
+RO1_PIS3$AnyAsm2 <- fct_other(RO1_PIS3$AnyAsm2, keep = "Yes", other_level = "No")
+
+##code ASM exposure as Any ASM exposure extended 6 months
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(AnyAsm3 = case_when(Prenatal3_DIA == "Yes" |
+                               Prenatal3_LOR == "Yes" |
+                               Prenatal3_MID == "Yes" |
+                               Prenatal3_NIT == "Yes" |
+                               Prenatal3_PIR == "Yes" |
+                               Prenatal3_TEM == "Yes" |
+                               Prenatal3_GABA == "Yes" |
+                               Prenatal3_PRG == "Yes" |
+                               Prenatal3_LCS == "Yes" |
+                               Prenatal3_TPR == "Yes" |
+                               Prenatal3_CBZ == "Yes" |
+                               Prenatal3_LVT == "Yes" |
+                               Prenatal3_LMT == "Yes" |
+                               Prenatal3_RTG == "Yes" |
+                               Prenatal3_CLZ == "Yes" |
+                               Prenatal3_SVP == "Yes" |
+                               Prenatal3_PHT == "Yes" |
+                               Prenatal3_CLB == "Yes" |
+                               Prenatal3_PRP == "Yes" |
+                               Prenatal3_ZNS == "Yes" |
+                               Prenatal3_PHB == "Yes" |
+                               Prenatal3_PRM == "Yes" |
+                               Prenatal3_OXC == "Yes" |
+                               Prenatal3_BRV == "Yes" |
+                               Prenatal3_ESL == "Yes" |
+                               Prenatal3_TIA == "Yes" |
+                               Prenatal3_ETH == "Yes" |
+                               Prenatal3_VIG == "Yes" ~ "Yes",
+                             TRUE ~ "No"))
+
+RO1_PIS3$AnyAsm3 <- fct_other(RO1_PIS3$AnyAsm3, keep = "Yes", other_level = "No")
+
+##Code any prenatal ASM using the restricted list
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(AnyAsm4 = case_when(Prenatal1_PIR == "Yes" |
+                               Prenatal1_LCS == "Yes" |
+                               Prenatal1_TPR == "Yes" |
+                               Prenatal1_CBZ == "Yes" |
+                               Prenatal1_LVT == "Yes" |
+                               Prenatal1_LMT == "Yes" |
+                               Prenatal1_RTG == "Yes" |
+                               Prenatal1_SVP == "Yes" |
+                               Prenatal1_PHT == "Yes" |
+                               Prenatal1_CLB == "Yes" |
+                               Prenatal1_PRP == "Yes" |
+                               Prenatal1_ZNS == "Yes" |
+                               Prenatal1_PHB == "Yes" |
+                               Prenatal1_PRM == "Yes" |
+                               Prenatal1_OXC == "Yes" |
+                               Prenatal1_BRV == "Yes" |
+                               Prenatal1_ESL == "Yes" |
+                               Prenatal1_TIA == "Yes" |
+                               Prenatal1_ETH == "Yes" |
+                               Prenatal1_VIG == "Yes" ~ "Yes",
+                             TRUE ~ "No"))
+
+RO1_PIS3$AnyAsm4 <- fct_other(RO1_PIS3$AnyAsm4, keep = "Yes", other_level = "No")
+
+##Code any prenatal ASM using the restricted list extended 3 months
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(AnyAsm5 = case_when(Prenatal2_PIR == "Yes" |
+                               Prenatal2_LCS == "Yes" |
+                               Prenatal2_TPR == "Yes" |
+                               Prenatal2_CBZ == "Yes" |
+                               Prenatal2_LVT == "Yes" |
+                               Prenatal2_LMT == "Yes" |
+                               Prenatal2_RTG == "Yes" |
+                               Prenatal2_SVP == "Yes" |
+                               Prenatal2_PHT == "Yes" |
+                               Prenatal2_CLB == "Yes" |
+                               Prenatal2_PRP == "Yes" |
+                               Prenatal2_ZNS == "Yes" |
+                               Prenatal2_PHB == "Yes" |
+                               Prenatal2_PRM == "Yes" |
+                               Prenatal2_OXC == "Yes" |
+                               Prenatal2_BRV == "Yes" |
+                               Prenatal2_ESL == "Yes" |
+                               Prenatal2_TIA == "Yes" |
+                               Prenatal2_ETH == "Yes" |
+                               Prenatal2_VIG == "Yes" ~ "Yes",
+                             TRUE ~ "No"))
+
+RO1_PIS3$AnyAsm5 <- fct_other(RO1_PIS3$AnyAsm5, keep = "Yes", other_level = "No")
+
+
+##Code any prenatal ASM using the restricted list extended 6 months
+RO1_PIS3 <- RO1_PIS3 %>%
+  mutate(AnyAsm6 = case_when(Prenatal3_PIR == "Yes" |
+                               Prenatal3_LCS == "Yes" |
+                               Prenatal3_TPR == "Yes" |
+                               Prenatal3_CBZ == "Yes" |
+                               Prenatal3_LVT == "Yes" |
+                               Prenatal3_LMT == "Yes" |
+                               Prenatal3_RTG == "Yes" |
+                               Prenatal3_SVP == "Yes" |
+                               Prenatal3_PHT == "Yes" |
+                               Prenatal3_CLB == "Yes" |
+                               Prenatal3_PRP == "Yes" |
+                               Prenatal3_ZNS == "Yes" |
+                               Prenatal3_PHB == "Yes" |
+                               Prenatal3_PRM == "Yes" |
+                               Prenatal3_OXC == "Yes" |
+                               Prenatal3_BRV == "Yes" |
+                               Prenatal3_ESL == "Yes" |
+                               Prenatal3_TIA == "Yes" |
+                               Prenatal3_ETH == "Yes" |
+                               Prenatal3_VIG == "Yes" ~ "Yes",
+                             TRUE ~ "No"))
+
+RO1_PIS3$AnyAsm6 <- fct_other(RO1_PIS3$AnyAsm6, keep = "Yes", other_level = "No")
+
+table(RO1_PIS3$AnyAsm1, RO1_PIS3$EpilepsyCases)
+table(RO1_PIS3$AnyAsm4, RO1_PIS3$EpilepsyCases)
+
+
+RO1_PIS3a <- RO1_PIS3
+
+##this dataframe is for checking the ASM codes are working and I can get those on mono and poly
+
+
+RO1_PIS3d <- subset(RO1_PIS3a, select=c("mother_id", "PregnancyNumber",
+                                        "AnyAsm1", "AnyAsm2", "AnyAsm3",
+                                        "AnyAsm4", "AnyAsm5", "AnyAsm6",
+                                        "pregnancy_end_date",
+                                        "Prenatal1_GABA", "Prenatal1_PRG",
+                                        "Prenatal1_LCS", "Prenatal1_TPR",
+                                        "Prenatal1_CBZ", "Prenatal1_LVT",
+                                        "Prenatal1_LMT", "Prenatal1_RTG",
+                                        "Prenatal1_CLZ", "Prenatal1_SVP",
+                                        "Prenatal1_PHT", "Prenatal1_CLB",
+                                        "Prenatal1_PRP", "Prenatal1_ZNS",
+                                        "Prenatal1_PHB", "Prenatal1_PRM",
+                                        "Prenatal1_OXC", "Prenatal1_BRV",
+                                        "Prenatal1_ESL", "Prenatal1_TIA",
+                                        "Prenatal1_ETH", "Prenatal1_VIG",
+                                        "Prenatal1_DIA", "Prenatal1_LOR",
+                                        "Prenatal1_MID", "Prenatal1_NIT",
+                                        "Prenatal1_PIR", "Prenatal1_TEM"))
+
+RO1_PIS3d_long <- pivot_longer(RO1_PIS3d,
+                               cols = starts_with("Prenatal1_"),
+                               names_to = "ASM",
+                               values_to = "Exposed")
+
+RO1_PIS3d_longb <- RO1_PIS3d_long %>%
+  distinct(mother_id, PregnancyNumber, AnyAsm1, AnyAsm4, ASM, Exposed, .keep_all = TRUE)
+
+##try without filtering
+RO1_PIS3d_longb2 <- RO1_PIS3d_longb %>%
+  filter(Exposed == "Yes")
+
+##pivot wider is only working if I drop ASM1 and ASM4, so that the idcols are
+##mother_id and pregnancy number. So I have data on multiple meds for the same
+##mother and pregnancy number in the same rows, but I now need to rejoin later
+##so I have ASM1 and ASM4 too.
+
+RO1_PIS3d_wide <- RO1_PIS3d_longb2 %>%
+  pivot_wider(id_cols = mother_id:PregnancyNumber, names_from = ASM, values_from = Exposed)
+
+save(RO1_PIS3d_wide, file = "RO1_PIS3d_wide.RData")
+load("RO1_PIS3d_wide.RData")
+
+levels(RO1_PIS3d_wide$Prenatal1_GABA)
+table(RO1_PIS3d_wide$Prenatal1_TPR)
+
+RO1_PIS3d_wide$Prenatal1_GABA[is.na(RO1_PIS3d_wide$Prenatal1_GABA)] <- "No"
+RO1_PIS3d_wide$Prenatal1_PRG[is.na(RO1_PIS3d_wide$Prenatal1_PRG)] <- "No"
+RO1_PIS3d_wide$Prenatal1_LCS[is.na(RO1_PIS3d_wide$Prenatal1_LCS)] <- "No"
+RO1_PIS3d_wide$Prenatal1_TPR[is.na(RO1_PIS3d_wide$Prenatal1_TPR)] <- "No"
+RO1_PIS3d_wide$Prenatal1_CBZ[is.na(RO1_PIS3d_wide$Prenatal1_CBZ)] <- "No"
+RO1_PIS3d_wide$Prenatal1_LVT[is.na(RO1_PIS3d_wide$Prenatal1_LVT)] <- "No"
+RO1_PIS3d_wide$Prenatal1_LMT[is.na(RO1_PIS3d_wide$Prenatal1_LMT)] <- "No"
+RO1_PIS3d_wide$Prenatal1_CLZ[is.na(RO1_PIS3d_wide$Prenatal1_CLZ)] <- "No"
+RO1_PIS3d_wide$Prenatal1_SVP[is.na(RO1_PIS3d_wide$Prenatal1_SVP)] <- "No"
+RO1_PIS3d_wide$Prenatal1_PHT[is.na(RO1_PIS3d_wide$Prenatal1_PHT)] <- "No"
+RO1_PIS3d_wide$Prenatal1_CLB[is.na(RO1_PIS3d_wide$Prenatal1_CLB)] <- "No"
+RO1_PIS3d_wide$Prenatal1_PRP[is.na(RO1_PIS3d_wide$Prenatal1_PRP)] <- "No"
+RO1_PIS3d_wide$Prenatal1_ZNS[is.na(RO1_PIS3d_wide$Prenatal1_ZNS)] <- "No"
+RO1_PIS3d_wide$Prenatal1_PHB[is.na(RO1_PIS3d_wide$Prenatal1_PHB)] <- "No"
+RO1_PIS3d_wide$Prenatal1_PRM[is.na(RO1_PIS3d_wide$Prenatal1_PRM)] <- "No"
+RO1_PIS3d_wide$Prenatal1_OXC[is.na(RO1_PIS3d_wide$Prenatal1_OXC)] <- "No"
+RO1_PIS3d_wide$Prenatal1_BRV[is.na(RO1_PIS3d_wide$Prenatal1_BRV)] <- "No"
+RO1_PIS3d_wide$Prenatal1_TIA[is.na(RO1_PIS3d_wide$Prenatal1_TIA)] <- "No"
+RO1_PIS3d_wide$Prenatal1_ETH[is.na(RO1_PIS3d_wide$Prenatal1_ETH)] <- "No"
+RO1_PIS3d_wide$Prenatal1_VIG[is.na(RO1_PIS3d_wide$Prenatal1_VIG)] <- "No"
+RO1_PIS3d_wide$Prenatal1_DIA[is.na(RO1_PIS3d_wide$Prenatal1_DIA)] <- "No"
+RO1_PIS3d_wide$Prenatal1_LOR[is.na(RO1_PIS3d_wide$Prenatal1_LOR)] <- "No"
+RO1_PIS3d_wide$Prenatal1_MID[is.na(RO1_PIS3d_wide$Prenatal1_MID)] <- "No"
+RO1_PIS3d_wide$Prenatal1_NIT[is.na(RO1_PIS3d_wide$Prenatal1_NIT)] <- "No"
+RO1_PIS3d_wide$Prenatal1_TEM[is.na(RO1_PIS3d_wide$Prenatal1_TEM)] <- "No"
+
+
+library(stringr)
+
+##code ASM to mono and poly..I am stuck HERE!! its not counting the frequency of yes
+
+RO1_PIS3d_wide2 <- RO1_PIS3d_wide %>%
+  group_by(mother_id, PregnancyNumber) %>%
+  mutate_at(vars(Prenatal1_DIA:Prenatal1_VIG), ~ sum(. == "Yes"))
+
+RO1_PIS3d_wide2$Prenatal1_ESL[is.na(RO1_PIS3d_wide2$Prenatal1_ESL)] <- 0
+
+RO1_PIS3d_wide2 <- RO1_PIS3d_wide2 %>%
+  mutate(ASMfreq = Prenatal1_DIA + Prenatal1_GABA + Prenatal1_PRG +
+           Prenatal1_LCS + Prenatal1_TPR + Prenatal1_CBZ + Prenatal1_LVT +
+           Prenatal1_LMT + Prenatal1_CLZ + Prenatal1_SVP + Prenatal1_PHT +
+           Prenatal1_CLB + Prenatal1_PRP + Prenatal1_ZNS + Prenatal1_TEM +
+           Prenatal1_PHB + Prenatal1_PRM + Prenatal1_OXC + Prenatal1_BRV +
+           Prenatal1_ESL + Prenatal1_TIA + Prenatal1_ETH + Prenatal1_VIG +
+           Prenatal1_LOR +  Prenatal1_MID + Prenatal1_NIT)
+
+table(RO1_PIS3d_wide2$ASMfreq)
+
+RO1_PIS3d_wide2 <- RO1_PIS3d_wide2 %>%
+  mutate(ASMfreq1 = case_when(ASMfreq == 1 ~ "Mono",
+                              ASMfreq >= 2 ~ "Poly",
+                              ASMfreq == 0 ~ "None",
+                              TRUE ~ "No"))
+
+table(RO1_PIS3d_wide2$ASMfreq1)
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide2
+
+##that's all worked, but now I need to change the yes to 1 in the code below
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(DIAmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_DIA == 1 ~ "DIAmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_DIA == 1 ~ "DIA_Poly"))
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(TEMmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_TEM == 1 ~ "TEMmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_TEM == 1 ~ "TEM_Poly"))
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(PRGmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_PRG == 1 ~ "PRGmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_PRG == 1 ~ "PRG_Poly"))
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(GABAmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_GABA == 1 ~ "GABAmono",
+                               ASMfreq1 == "None" ~ "Unexposed",
+                               ASMfreq1 == "Poly" & Prenatal1_GABA == 1 ~ "GABA_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(PRGmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_PRG == 1 ~ "PRGmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_PRG == 1 ~ "PRG_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(LCSmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_LCS == 1 ~ "LCSmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_LCS == 1 ~ "LCS_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(TPRmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_TPR == 1 ~ "TPRmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_TPR == 1 ~ "TPR_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(CBZmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_CBZ == 1 ~ "CBZmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_CBZ == 1 ~ "CBZ_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(LVTmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_LVT == 1 ~ "LVTmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_LVT == 1 ~ "LVT_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(LMTmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_LMT == 1 ~ "LMTmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_LMT == 1 ~ "LMT_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(CLZmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_CLZ == 1 ~ "CLZmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_CLZ == 1 ~ "CLZ_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(SVPmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_SVP == 1 ~ "SVPmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_SVP == 1 ~ "SVP_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(PHTmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_PHT == 1 ~ "PHTmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_PHT == 1 ~ "PHT_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(CLBmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_CLB == 1 ~ "CLBmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_CLB == 1 ~ "CLB_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(ZNSmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_ZNS == 1 ~ "ZNSmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_ZNS == 1 ~ "ZNS_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(PHBmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_PHB == 1 ~ "PHBmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_PHB == 1 ~ "PHB_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(OXCmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_OXC == 1 ~ "OXCmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_OXC == 1 ~ "OXC_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(BRVmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_BRV == 1 ~ "BRVmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_BRV == 1 ~ "BRV_Poly"))
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(TIAmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_TIA == 1 ~ "TIAmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_TIA == 1 ~ "TIA_Poly"))
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(ETHmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_ETH == 1 ~ "ETHmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_ETH == 1 ~ "ETH_Poly"))
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(VIGmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_VIG == 1 ~ "VIGmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_VIG == 1 ~ "VIG_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(PRPmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_PRP == 1 ~ "PRPmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_PRP == 1 ~ "PRP_Poly"))
+
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(PRMmono1 = case_when(ASMfreq1 == "Mono" & Prenatal1_PRM == 1 ~ "PRMmono",
+                              ASMfreq1 == "None" ~ "Unexposed",
+                              ASMfreq1 == "Poly" & Prenatal1_PRM == 1 ~ "PRM_Poly"))
+
+table(RO1_PIS3d_wide$GABAmono1)
+table(RO1_PIS3d_wide$PRGmono1)
+table(RO1_PIS3d_wide$LCSmono1)
+table(RO1_PIS3d_wide$TPRmono1)
+table(RO1_PIS3d_wide$CBZmono1)
+table(RO1_PIS3d_wide$LVTmono1)
+table(RO1_PIS3d_wide$LMTmono1)
+table(RO1_PIS3d_wide$RTGmono1)
+table(RO1_PIS3d_wide$CLZmono1)
+table(RO1_PIS3d_wide$SVPmono1)
+table(RO1_PIS3d_wide$PHTmono1)
+table(RO1_PIS3d_wide$CLBmono1)
+table(RO1_PIS3d_wide$PRPmono1)
+table(RO1_PIS3d_wide$ZNSmono1)
+table(RO1_PIS3d_wide$PHBmono1)
+table(RO1_PIS3d_wide$PRMmono1)
+table(RO1_PIS3d_wide$OXCmono1)
+table(RO1_PIS3d_wide$BRVmono1)
+table(RO1_PIS3d_wide$ESLmono1)
+table(RO1_PIS3d_wide$TIAmono1)
+table(RO1_PIS3d_wide$ETHmono1)
+table(RO1_PIS3d_wide$VIGmono1)
+table(RO1_PIS3d_wide$DIAmono1)
+
+
+RO1_PIS3d_wide$GABAmono1 <- as.factor(RO1_PIS3d_wide$GABAmono1)
+RO1_PIS3d_wide$PRGmono1 <- as.factor(RO1_PIS3d_wide$PRGmono1)
+RO1_PIS3d_wide$LCSmono1 <- as.factor(RO1_PIS3d_wide$LCSmono1)
+RO1_PIS3d_wide$TPRmono1 <- as.factor(RO1_PIS3d_wide$TPRmono1)
+RO1_PIS3d_wide$CBZmono1 <- as.factor(RO1_PIS3d_wide$CBZmono1)
+RO1_PIS3d_wide$LVTmono1 <- as.factor(RO1_PIS3d_wide$LVTmono1)
+RO1_PIS3d_wide$LMTmono1 <- as.factor(RO1_PIS3d_wide$LMTmono1)
+RO1_PIS3d_wide$CLZmono1 <- as.factor(RO1_PIS3d_wide$CLZmono1)
+RO1_PIS3d_wide$SVPmono1 <- as.factor(RO1_PIS3d_wide$SVPmono1)
+RO1_PIS3d_wide$PHTmono1 <- as.factor(RO1_PIS3d_wide$PHTmono1)
+RO1_PIS3d_wide$CLBmono1 <- as.factor(RO1_PIS3d_wide$CLBmono1)
+RO1_PIS3d_wide$PRPmono1 <- as.factor(RO1_PIS3d_wide$PRPmono1)
+RO1_PIS3d_wide$ZNSmono1 <- as.factor(RO1_PIS3d_wide$ZNSmono1)
+RO1_PIS3d_wide$PHBmono1 <- as.factor(RO1_PIS3d_wide$PHBmono1)
+RO1_PIS3d_wide$PRMmono1 <- as.factor(RO1_PIS3d_wide$PRMmono1)
+RO1_PIS3d_wide$OXCmono1 <- as.factor(RO1_PIS3d_wide$OXCmono1)
+RO1_PIS3d_wide$BRVmono1 <- as.factor(RO1_PIS3d_wide$BRVmono1)
+RO1_PIS3d_wide$TIAmono1 <- as.factor(RO1_PIS3d_wide$TIAmono1)
+RO1_PIS3d_wide$ETHmono1 <- as.factor(RO1_PIS3d_wide$ETHmono1)
+RO1_PIS3d_wide$VIGmono1 <- as.factor(RO1_PIS3d_wide$VIGmono1)
+
+##okay that all looks good, but now I need to rejoin somewhere to get the any AnyAsm1 and
+##AnyAsm4 back
+##code ASM exposure as Any ASM exposure
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(AnyAsm1 = case_when(Prenatal1_DIA == 1 |
+                               Prenatal1_LOR == 1 |
+                               Prenatal1_MID == 1 |
+                               Prenatal1_NIT == 1 |
+                               Prenatal1_TEM == 1 |
+                               Prenatal1_GABA == 1 |
+                               Prenatal1_PRG == 1 |
+                               Prenatal1_LCS == 1 |
+                               Prenatal1_TPR == 1 |
+                               Prenatal1_CBZ == 1 |
+                               Prenatal1_LVT == 1 |
+                               Prenatal1_LMT == 1 |
+                               Prenatal1_CLZ == 1 |
+                               Prenatal1_SVP == 1 |
+                               Prenatal1_PHT == 1 |
+                               Prenatal1_CLB == 1 |
+                               Prenatal1_PRP == 1 |
+                               Prenatal1_ZNS == 1 |
+                               Prenatal1_PHB == 1 |
+                               Prenatal1_PRM == 1 |
+                               Prenatal1_OXC == 1 |
+                               Prenatal1_BRV == 1 |
+                               Prenatal1_ESL == 1 |
+                               Prenatal1_TIA == 1 |
+                               Prenatal1_ETH == 1 |
+                               Prenatal1_VIG == 1 ~ "Yes",
+                             TRUE ~ "No"))
+
+RO1_PIS3d_wide$AnyAsm1 <- fct_other(RO1_PIS3d_wide$AnyAsm1, keep = "Yes", other_level = "No")
+
+RO1_PIS3d_wide <- RO1_PIS3d_wide %>%
+  mutate(AnyAsm4 = case_when(Prenatal1_LCS == 1 |
+                               Prenatal1_TPR == 1 |
+                               Prenatal1_CBZ == 1 |
+                               Prenatal1_LVT == 1 |
+                               Prenatal1_LMT == 1 |
+                               Prenatal1_SVP == 1 |
+                               Prenatal1_PHT == 1 |
+                               Prenatal1_CLB == 1 |
+                               Prenatal1_PRP == 1 |
+                               Prenatal1_ZNS == 1 |
+                               Prenatal1_PHB == 1 |
+                               Prenatal1_PRM == 1 |
+                               Prenatal1_OXC == 1 |
+                               Prenatal1_BRV == 1 |
+                               Prenatal1_ESL == 1 |
+                               Prenatal1_TIA == 1 |
+                               Prenatal1_ETH == 1 |
+                               Prenatal1_VIG == 1 ~ "Yes",
+                             TRUE ~ "No"))
+
+RO1_PIS3d_wide$AnyAsm4 <- fct_other(RO1_PIS3d_wide$AnyAsm4, keep = "Yes", other_level = "No")
+
+table(RO1_PIS3d_wide$AnyAsm1)
+save
+save(RO1_PIS3d_wide, file = "RO1_PIS3d_wide.RData")
+load("RO1_PIS3d_wide.RData")
+
+
+##START HERE to rejoin this ASM dataset to dataset before joinging PIS.
+
+RO1_PIS3 <- left_join(RO1_PIS3, RO1_PIS3d_wide, by = "mother_id", keep = FALSE, multiple = "first", unmatched = "drop", relationship = "many-to-one")
+
+levels(RO1_PIS3$AnyAsm1) <- c(levels(RO1_PIS3$AnyAsm1), "No")
+RO1_PIS3$AnyAsm1[is.na(RO1_PIS3$AnyAsm1)] <- "No"
+RO1_PIS3$AnyAsm4[is.na(RO1_PIS3$AnyAsm4)] <- "No"
+RO1_PIS3$AnyAsm4 <- fct_other(RO1_PIS3$AnyAsm4, keep = "Yes", other_level = "No")
+RO1_PIS3$AnyAsm1 <- fct_other(RO1_PIS3$AnyAsm1, keep = "Yes", other_level = "No")
+
+
+table(RO1_PIS3$EpilepsyCases2, RO1_PIS3$AnyAsm1)
+table(RO1_PIS3$EpilepsyCases2, RO1_PIS3$AnyAsm4)
+
+##relevel variables to opposite ref
+RO1_PIS3$AnyAsm1 <- relevel(RO1_PIS3$AnyAsm1, ref = "No")
+RO1_PIS3$AnyAsm4 <- relevel(RO1_PIS3$AnyAsm4, ref = "No")
+RO1_PIS3$Preexisting_DIABETES <- relevel(RO1_PIS3$Preexisting_DIABETES, ref = "Not_Preexisting")
+RO1_PIS3$GestationalDiabetes <- relevel(RO1_PIS3$GestationalDiabetes, ref = "No")
+RO1_PIS3$GestationalHypertension <- relevel(RO1_PIS3$GestationalHypertension, ref = "No_GestHyp")
+RO1_PIS3$Preeclampsia <- relevel(RO1_PIS3$Preeclampsia, ref = "No_Preeclampsia")
+RO1_PIS3$Eclampsia <- relevel(RO1_PIS3$Eclampsia, ref = "No_Eclampsia")
+RO1_PIS3$PPH <- relevel(RO1_PIS3$PPH, ref = "No_PPH")
+RO1_PIS3$PlacentaPraevia <- relevel(RO1_PIS3$PlacentaPraevia, ref = "No_PlacPrae")
+RO1_PIS3$PretermBirth <- relevel(RO1_PIS3$PretermBirth, ref = "No_Preterm")
+RO1_PIS3$PREVIOUS_SPONTANEOUS_ABORTIONS <- relevel(RO1_PIS3$PREVIOUS_SPONTANEOUS_ABORTIONS, ref = "No")
+
+RO1_PIS3$DIAmono1 <- as.factor(RO1_PIS3$DIAmono1)
+RO1_PIS3$TEMmono1 <- as.factor(RO1_PIS3$TEMmono1)
+RO1_PIS3$GABAmono1 <- as.factor(RO1_PIS3$GABAmono1)
+RO1_PIS3$PRGmono1 <- as.factor(RO1_PIS3$PRGmono1)
+RO1_PIS3$LCSmono1 <- as.factor(RO1_PIS3$LCSmono1)
+RO1_PIS3$TPRmono1 <- as.factor(RO1_PIS3$TPRmono1)
+RO1_PIS3$CBZmono1 <- as.factor(RO1_PIS3$CBZmono1)
+RO1_PIS3$LVTmono1 <- as.factor(RO1_PIS3$LVTmono1)
+RO1_PIS3$LMTmono1 <- as.factor(RO1_PIS3$LMTmono1)
+RO1_PIS3$CLZmono1 <- as.factor(RO1_PIS3$CLZmono1)
+RO1_PIS3$SVPmono1 <- as.factor(RO1_PIS3$SVPmono1)
+RO1_PIS3$PHTmono1 <- as.factor(RO1_PIS3$PHTmono1)
+RO1_PIS3$CLBmono1 <- as.factor(RO1_PIS3$CLBmono1)
+RO1_PIS3$PRPmono1 <- as.factor(RO1_PIS3$PRPmono1)
+RO1_PIS3$ZNSmono1 <- as.factor(RO1_PIS3$ZNSmono1)
+RO1_PIS3$PHBmono1 <- as.factor(RO1_PIS3$PHBmono1)
+RO1_PIS3$OXCmono1 <- as.factor(RO1_PIS3$OXCmono1)
+RO1_PIS3$BRVmono1 <- as.factor(RO1_PIS3$BRVmono1)
+RO1_PIS3$TIAmono1 <- as.factor(RO1_PIS3$TIAmono1)
+RO1_PIS3$ETHmono1 <- as.factor(RO1_PIS3$ETHmono1)
+RO1_PIS3$VIGmono1 <- as.factor(RO1_PIS3$VIGmono1)
+
+RO1_PIS3$DIAmono1 <- fct_na_value_to_level(RO1_PIS3$DIAmono1, level = "Unexposed")
+RO1_PIS3$GABAmono1 <- fct_na_value_to_level(RO1_PIS3$GABAmono1, level = "Unexposed")
+RO1_PIS3$PRGmono1 <- fct_na_value_to_level(RO1_PIS3$PRGmono1, level = "Unexposed")
+RO1_PIS3$LCSmono1 <- fct_na_value_to_level(RO1_PIS3$LCSmono1, level = "Unexposed")
+RO1_PIS3$TPRmono1 <- fct_na_value_to_level(RO1_PIS3$TPRmono1, level = "Unexposed")
+RO1_PIS3$CBZmono1 <- fct_na_value_to_level(RO1_PIS3$CBZmono1, level = "Unexposed")
+RO1_PIS3$LVTmono1 <- fct_na_value_to_level(RO1_PIS3$LVTmono1, level = "Unexposed")
+RO1_PIS3$LMTmono1 <- fct_na_value_to_level(RO1_PIS3$LMTmono1, level = "Unexposed")
+RO1_PIS3$CLZmono1 <- fct_na_value_to_level(RO1_PIS3$CLZmono1, level = "Unexposed")
+RO1_PIS3$SVPmono1 <- fct_na_value_to_level(RO1_PIS3$SVPmono1, level = "Unexposed")
+RO1_PIS3$PHTmono1 <- fct_na_value_to_level(RO1_PIS3$PHTmono1, level = "Unexposed")
+RO1_PIS3$CLBmono1 <- fct_na_value_to_level(RO1_PIS3$CLBmono1, level = "Unexposed")
+RO1_PIS3$PRPmono1 <- fct_na_value_to_level(RO1_PIS3$PRPmono1, level = "Unexposed")
+RO1_PIS3$ZNSmono1 <- fct_na_value_to_level(RO1_PIS3$ZNSmono1, level = "Unexposed")
+RO1_PIS3$PHBmono1 <- fct_na_value_to_level(RO1_PIS3$PHBmono1, level = "Unexposed")
+RO1_PIS3$PRMmono1 <- fct_na_value_to_level(RO1_PIS3$PRMmono1, level = "Unexposed")
+RO1_PIS3$OXCmono1 <- fct_na_value_to_level(RO1_PIS3$OXCmono1, level = "Unexposed")
+RO1_PIS3$BRVmono1 <- fct_na_value_to_level(RO1_PIS3$BRVmono1, level = "Unexposed")
+RO1_PIS3$TIAmono1 <- fct_na_value_to_level(RO1_PIS3$TIAmono1, level = "Unexposed")
+RO1_PIS3$ETHmono1 <- fct_na_value_to_level(RO1_PIS3$ETHmono1, level = "Unexposed")
+RO1_PIS3$VIGmono1 <- fct_na_value_to_level(RO1_PIS3$VIGmono1, level = "Unexposed")
+RO1_PIS3$TEMmono1 <- fct_na_value_to_level(RO1_PIS3$TEMmono1, level = "Unexposed")
+
+
+
+
+RO1_PIS3$DIAmono1 <- relevel(RO1_PIS3$DIAmono1, ref = "Unexposed")
+RO1_PIS3$TEMmono1 <- relevel(RO1_PIS3$TEMmono1, ref = "Unexposed")
+
+RO1_PIS3$GABAmono1 <- relevel(RO1_PIS3$GABAmono1, ref = "Unexposed")
+
+RO1_PIS3$PRGmono1 <- relevel(RO1_PIS3$PRGmono1, ref = "Unexposed")
+
+RO1_PIS3$LCSmono1 <- relevel(RO1_PIS3$LCSmono1, ref = "Unexposed")
+
+RO1_PIS3$TPRmono1 <- relevel(RO1_PIS3$TPRmono1, ref = "Unexposed")
+
+RO1_PIS3$CBZmono1 <- relevel(RO1_PIS3$CBZmono1, ref = "Unexposed")
+
+RO1_PIS3$LVTmono1 <- relevel(RO1_PIS3$LVTmono1, ref = "Unexposed")
+
+RO1_PIS3$LMTmono1 <- relevel(RO1_PIS3$LMTmono1, ref = "Unexposed")
+
+RO1_PIS3$CLZmono1 <- relevel(RO1_PIS3$CLZmono1, ref = "Unexposed")
+
+RO1_PIS3$SVPmono1 <- relevel(RO1_PIS3$SVPmono1, ref = "Unexposed")
+
+RO1_PIS3$PHTmono1 <- relevel(RO1_PIS3$PHTmono1, ref = "Unexposed")
+
+RO1_PIS3$CLBmono1 <- relevel(RO1_PIS3$CLBmono1, ref = "Unexposed")
+
+RO1_PIS3$PRPmono1 <- relevel(RO1_PIS3$PRPmono1, ref = "Unexposed")
+
+RO1_PIS3$ZNSmono1 <- relevel(RO1_PIS3$ZNSmono1, ref = "Unexposed")
+
+RO1_PIS3$PHBmono1 <- relevel(RO1_PIS3$PHBmono1, ref = "Unexposed")
+
+RO1_PIS3$OXCmono1 <- relevel(RO1_PIS3$OXCmono1, ref = "Unexposed")
+
+RO1_PIS3$BRVmono1 <- relevel(RO1_PIS3$BRVmono1, ref = "Unexposed")
+
+RO1_PIS3$TIAmono1 <- relevel(RO1_PIS3$TIAmono1, ref = "Unexposed")
+
+RO1_PIS3$ETHmono1 <- relevel(RO1_PIS3$ETHmono1, ref = "Unexposed")
+
+RO1_PIS3$VIGmono1 <- relevel(RO1_PIS3$VIGmono1, ref = "Unexposed")
+
+
+##subset RO1_PIS to include only relevant PIS data
+
+RO1d1 <- RO1_PIS3[RO1_PIS3$estimated_conception_date >= "1992-01-01" & RO1_PIS3$estimated_conception_date <= "2008-11-01", ]
+
+RO1PIS <- RO1_PIS3[RO1_PIS3$estimated_conception_date >= "2008-12-01" & RO1_PIS3$estimated_conception_date <= "2022-01-01", ]
+table(RO1PIS$EpilepsyCases2, RO1PIS$AnyAsm4)
+
+RO1PIS <- RO1PIS %>%
+  mutate(Prenatal1_DIA = case_when(Prenatal1_DIA.x == "Yes" ~ 1,
+                                  Prenatal1_DIA.y == 1 ~ 1,
+                                  TRUE ~ 0))
+
+
+RO1PIS$PregnancyNumber <- RO1PIS$PregnancyNumber.x
+RO1d1 <- RO1d1 %>%
+  ungroup
+RO1PIS <- RO1PIS %>%
+  ungroup
+ResearchQuestion1b <- ResearchQuestion1b %>%
+  ungroup
+RO1PIS <- left_join(RO1PIS, ResearchQuestion1b, by=c("mother_id", "PregnancyNumber"), keep = F, multiple = "first", unmatched = "drop", relationship = "many-to-one")
+
+##
+RO1PIS2 <- subset(RO1PIS, select=c("mother_id", "PregnancyNumber", "Maternal_Age", "DATE_OF_DELIVERY", "ADMISSION_DATE", "DeathDate", "DeliveryDate", "Delivery_Cohort", "BodyMassIndex5",
+                                  "TOTAL_PREVIOUS_PREGNANCIES", "PREVIOUS_SPONTANEOUS_ABORTIONS", "gestationalage1", "gestationalage2", "gestationalage3",
+                                  "PREVIOUS_THERAPUTIC_ABORTIONS", "PREVIOUS_CEASAREAN_SECTIONS",
+                                  "TOTAL_PREVIOUS_STILLBIRTHS", "TOTAL_PREVIOUS_NEONATAL_DEATHS", "PHD", "Pre_Diabetes",
+                                  "DRUG_MISUSE", "INJECTED_ILLICIT_DRUGS", "WEEKLY_ALCOHOL_CONSUMPTION",
+                                  "ANTENATAL_STEROIDS", "Preexisting_DIABETES", "ESTIMATED_GESTATION", "estimated_conception_date", "estimated_gestation",
+                                  "SMOKER_DURING_PREGNANCY", "BOOKING_SMOKING_HISTORY", "Induced_Abortion",
+                                  "ANALGESIA_DURING_LABOUR_OR_DEL", "INDUCTION_OF_LABOUR", "CongenitalConditions", "N_I_Death",
+                                  "NUM_OF_BIRTHS_THIS_PREGNANCY", "SEX_BABY_1", "PARITY",
+                                  "SIMD", "GestationalDiabetes", "gestationalage", "Livebirth",
+                                  "Caesarean", "Induced_Abortion", "Miscarriage2", "Stillbirth", "Apgar_5_Min", "NICU",
+                                  "GestationalHypertension", "Preeclampsia", "Eclampsia", "APH", "PPH",
+                                  "PlacentaPraevia", "PlacentaAbruption",  "LBW", "PretermBirth",
+                                  "PerinatalDeaths", "EpilepsyCases2",  "GABAmono1", "PRGmono1", "TPRmono1",  
+                                  "CBZmono1", "LVTmono1",  "LMTmono1", "SVPmono1", "DIAmono1", "TEMmono1",
+                                  "VIGmono1", "BRVmono1", "CBZmono1",
+                                  "CLBmono1", "ETHmono1", "TIAmono1", "CLZmono1", "OXCmono1",
+                                  "LCSmono1", "PRMmono1", "PHBmono1", "ZNSmono1", "PHTmono1", "PRPmono1",
+                                  "AnyAsm1", "AnyAsm4", "ASMfreq1", "Prenatal1_ESL", "Prenatal1_VIG", "Prenatal1_BRV", "Prenatal1_CBZ",
+                                  "Prenatal1_CLB", "Prenatal1_ETH", "Prenatal1_TIA", "Prenatal1_CLZ", "Prenatal1_OXC", "Prenatal1_DIA",
+                                  "Prenatal1_GABA", "Prenatal1_LCS", "Prenatal1_LMT", "Prenatal1_LVT", "Prenatal1_LOR", "Prenatal1_MID",
+                                  "Prenatal1_NIT", "Prenatal1_PRM", "Prenatal1_PHB", "Prenatal1_ZNS", "Prenatal1_PHT", "Prenatal1_PRP",
+                                  "Prenatal1_PRG", "Prenatal1_TEM", "Prenatal1_SVP", "Prenatal1_TPR"))
+
+table(RO1PIS2$EpilepsyCases2, RO1PIS2$AnyAsm1)
+table(RO1PIS2$EpilepsyCases2, RO1PIS$AnyAsm4)
+table(RO1PIS2$EpilepsyCases2, RO1PIS$DIAmono1)
+
+RO1PIS2$SIMD <- as.ordered(RO1PIS2$SIMD)
+levels(RO1PIS2$SIMD)
+
+sum(is.na(RO1PIS2$NUM_OF_BIRTHS_THIS_PREGNANCY))
+RO1PIS2$NUM_OF_BIRTHS_THIS_PREGNANCY[is.na(RO1PIS2$NUM_OF_BIRTHS_THIS_PREGNANCY)] <- 0
+is.factor(RO1PIS2$NUM_OF_BIRTHS_THIS_PREGNANCY)
+RO1PIS2$NUM_OF_BIRTHS_THIS_PREGNANCY <- as.factor(RO1PIS2$NUM_OF_BIRTHS_THIS_PREGNANCY)
+table(RO1PIS2$NUM_OF_BIRTHS_THIS_PREGNANCY)
+levels(RO1PIS2$NUM_OF_BIRTHS_THIS_PREGNANCY)
+table(RO1PIS2$NUM_OF_BIRTHS_THIS_PREGNANCY)
+RO1PIS2 <- subset(RO1PIS2, RO1PIS2$NUM_OF_BIRTHS_THIS_PREGNANCY %in% c("0", "1"))
+
+
+RO1PIS2 <- subset(RO1PIS2, GABAmono1 == "Unexposed" & DIAmono1 == "Unexposed" &
+                    TEMmono1 == "Unexposed" & PRGmono1 == "Unexposed")
+
+
+#relevel variables
+RO1PIS2$EpilepsyCases2 <- relevel(RO1PIS2$EpilepsyCases2, ref = "No_Epilepsy")
+RO1PIS2$Maternal_Age <- as.factor(RO1PIS2$Maternal_Age)
+RO1PIS2$Maternal_Age <- relevel(RO1PIS2$Maternal_Age, ref = "Aged_under_35")
+RO1PIS2$INDUCTION_OF_LABOUR <- relevel(RO1PIS2$INDUCTION_OF_LABOUR, ref = "No")
+RO1PIS2$GestationalDiabetes <- relevel(RO1PIS2$GestationalDiabetes, ref = "No")
+RO1PIS2$GestationalHypertension <- relevel(RO1PIS2$GestationalHypertension, ref = "No_GestHyp")
+RO1PIS2$Caesarean <- relevel(RO1PIS2$Caesarean, ref = "No_Caeserean")
+RO1PIS2$Miscarriage2 <- as.factor(RO1PIS2$Miscarriage2)
+RO1PIS2$Miscarriage2 <- relevel(RO1PIS2$Miscarriage2, ref = "No_Miscarriage")
+RO1PIS2$Stillbirth <- relevel(RO1PIS2$Stillbirth, ref = "No_Stillbirth")
+RO1PIS2$Apgar_5_Min <- relevel(RO1PIS2$Apgar_5_Min, ref = "Apgar8_10")
+RO1PIS2$NICU <- relevel(RO1PIS2$NICU, ref = "No_NICU")
+RO1PIS2$Preeclampsia <- relevel(RO1PIS2$Preeclampsia, ref = "No_Preeclampsia")
+RO1PIS2$Eclampsia <- relevel(RO1PIS2$Eclampsia, ref = "No_Eclampsia")
+RO1PIS2$APH <- relevel(RO1PIS2$APH, ref = "No_APH")
+RO1PIS2$PPH <- relevel(RO1PIS2$PPH, ref = "No_PPH")
+RO1PIS2$PlacentaPraevia <- relevel(RO1PIS2$PlacentaPraevia, ref = "No_PlacPrae")
+RO1PIS2$PlacentaAbruption <- relevel(RO1PIS2$PlacentaAbruption, ref = "No_PlacAbr")
+RO1PIS2$LBW <- as.factor(RO1PIS2$LBW)
+RO1PIS2$LBW <- relevel(RO1PIS2$LBW, ref = "No_LBW")
+RO1PIS2$PretermBirth <- relevel(RO1PIS2$PretermBirth, ref = "No_Preterm")
+RO1PIS2$PerinatalDeaths <- as.factor(RO1PIS2$PerinatalDeaths)
+RO1PIS2$PerinatalDeaths[is.na(RO1PIS2$PerinatalDeaths)] <- "No"
+RO1PIS2$PerinatalDeaths <- relevel(RO1PIS2$PerinatalDeaths, ref = "No")
+RO1PIS2$Induced_Abortion <- relevel(RO1PIS2$Induced_Abortion, ref = "No_Induced")
+RO1PIS2$CongenitalConditions <- as.factor(RO1PIS2$CongenitalConditions)
+RO1PIS2$CongenitalConditions <- relevel(RO1PIS2$CongenitalConditions, ref = "No_CongenitalConditions")
+RO1PIS2$N_I_Death <- as.factor(RO1PIS2$N_I_Death)
+RO1PIS2$N_I_Death <- relevel(RO1PIS2$N_I_Death, ref = "No_N_I_Death")
+RO1PIS2$PHD <- relevel(RO1PIS2$PHD, ref = "No_PHD")
+RO1PIS2$Pre_Diabetes <- relevel(RO1PIS2$Pre_Diabetes, ref = "No_Preexisting")
+
+
+## RO1 1992-2008 without BMI drug misuse and meds data etc
+##subset RO1 to 1992-2008 and do not include drug misuse and meds data etc
+RO1d1$PregnancyNumber <- RO1d1$PregnancyNumber.x
+RO1d1 <- left_join(RO1d1, ResearchQuestion1b, by=c("mother_id", "PregnancyNumber"), keep = F, multiple = "first", unmatched = "drop", relationship = "many-to-one")
+
+RO1d1 <- subset(RO1d1, select=c("mother_id", "PregnancyNumber", "Maternal_Age", "DATE_OF_DELIVERY", "ADMISSION_DATE", "DeathDate", "DeliveryDate", "Delivery_Cohort", "BodyMassIndex5",
+                                "TOTAL_PREVIOUS_PREGNANCIES", "PREVIOUS_SPONTANEOUS_ABORTIONS", "gestationalage1", "gestationalage2", "gestationalage3",
+                                "PREVIOUS_THERAPUTIC_ABORTIONS", "PREVIOUS_CEASAREAN_SECTIONS",
+                                "TOTAL_PREVIOUS_STILLBIRTHS", "TOTAL_PREVIOUS_NEONATAL_DEATHS", "PHD", "Pre_Diabetes",
+                                "DRUG_MISUSE", "INJECTED_ILLICIT_DRUGS", "WEEKLY_ALCOHOL_CONSUMPTION",
+                                "ANTENATAL_STEROIDS", "Preexisting_DIABETES", "ESTIMATED_GESTATION", "estimated_conception_date", "estimated_gestation",
+                                "SMOKER_DURING_PREGNANCY", "BOOKING_SMOKING_HISTORY", "Induced_Abortion",
+                                "ANALGESIA_DURING_LABOUR_OR_DEL", "INDUCTION_OF_LABOUR", "CongenitalConditions", "N_I_Death",
+                                "NUM_OF_BIRTHS_THIS_PREGNANCY", "SEX_BABY_1", "PARITY",
+                                "SIMD", "GestationalDiabetes", "gestationalage", "Livebirth",
+                                "Caesarean", "Induced_Abortion", "Miscarriage2", "Stillbirth", "Apgar_5_Min", "NICU",
+                                "GestationalHypertension", "Preeclampsia", "Eclampsia", "APH", "PPH",
+                                "PlacentaPraevia", "PlacentaAbruption",  "LBW", "PretermBirth",
+                                "PerinatalDeaths", "EpilepsyCases2"))
+
+##subset RO1d1 to include only single delivery pregnancies
+RO1d1$SIMD <- as.ordered(RO1d1$SIMD)
+levels(RO1d1$SIMD)
+sum(is.na(RO1d1$NUM_OF_BIRTHS_THIS_PREGNANCY))
+RO1d1$NUM_OF_BIRTHS_THIS_PREGNANCY[is.na(RO1d1$NUM_OF_BIRTHS_THIS_PREGNANCY)] <- 0
+is.factor(RO1d1$NUM_OF_BIRTHS_THIS_PREGNANCY)
+RO1d1$NUM_OF_BIRTHS_THIS_PREGNANCY <- as.factor(RO1d1$NUM_OF_BIRTHS_THIS_PREGNANCY)
+
+table(RO1d1$NUM_OF_BIRTHS_THIS_PREGNANCY)
+
+RO1d1 <- subset(RO1d1, RO1d1$NUM_OF_BIRTHS_THIS_PREGNANCY %in% c("0", "1"))
+RO1d1$EpilepsyCases2 <- relevel(RO1d1$EpilepsyCases2, ref = "No_Epilepsy")
+RO1d1$Maternal_Age <- as.factor(RO1d1$Maternal_Age)
+RO1d1$Maternal_Age <- relevel(RO1d1$Maternal_Age, ref = "Aged_under_35")
+RO1d1$INDUCTION_OF_LABOUR <- relevel(RO1d1$INDUCTION_OF_LABOUR, ref = "No")
+RO1d1$GestationalDiabetes <- relevel(RO1d1$GestationalDiabetes, ref = "No")
+RO1d1$GestationalHypertension <- relevel(RO1d1$GestationalHypertension, ref = "No_GestHyp")
+RO1d1$Caesarean <- relevel(RO1d1$Caesarean, ref = "No_Caeserean")
+RO1d1$Miscarriage2 <- as.factor(RO1d1$Miscarriage2)
+RO1d1$Miscarriage2 <- relevel(RO1d1$Miscarriage2, ref = "No_Miscarriage")
+RO1d1$Stillbirth <- relevel(RO1d1$Stillbirth, ref = "No_Stillbirth")
+RO1d1$Apgar_5_Min <- relevel(RO1d1$Apgar_5_Min, ref = "Apgar8_10")
+RO1d1$NICU <- relevel(RO1d1$NICU, ref = "No_NICU")
+RO1d1$Preeclampsia <- relevel(RO1d1$Preeclampsia, ref = "No_Preeclampsia")
+RO1d1$Eclampsia <- relevel(RO1d1$Eclampsia, ref = "No_Eclampsia")
+RO1d1$APH <- relevel(RO1d1$APH, ref = "No_APH")
+RO1d1$PPH <- relevel(RO1d1$PPH, ref = "No_PPH")
+RO1d1$PlacentaPraevia <- relevel(RO1d1$PlacentaPraevia, ref = "No_PlacPrae")
+RO1d1$PlacentaAbruption <- relevel(RO1d1$PlacentaAbruption, ref = "No_PlacAbr")
+RO1d1$LBW <- as.factor(RO1d1$LBW)
+RO1d1$LBW <- relevel(RO1d1$LBW, ref = "No_LBW")
+RO1d1$PretermBirth <- relevel(RO1d1$PretermBirth, ref = "No_Preterm")
+RO1d1$PerinatalDeaths <- as.factor(RO1d1$PerinatalDeaths)
+RO1d1$PerinatalDeaths[is.na(RO1d1$PerinatalDeaths)] <- "No"
+RO1d1$PerinatalDeaths <- relevel(RO1d1$PerinatalDeaths, ref = "No")
+RO1d1$Induced_Abortion <- relevel(RO1d1$Induced_Abortion, ref = "No_Induced")
+RO1d1$CongenitalConditions <- as.factor(RO1d1$CongenitalConditions)
+RO1d1$CongenitalConditions <- relevel(RO1d1$CongenitalConditions, ref = "No_CongenitalConditions")
+RO1d1$N_I_Death <- as.factor(RO1d1$N_I_Death)
+RO1d1$N_I_Death <- relevel(RO1d1$N_I_Death, ref = "No_N_I_Death")
+levels(RO1d1$Pre_Diabetes)
+RO1d1$PHD <- relevel(RO1d1$PHD, ref = "No_PHD")
+RO1d1$Pre_Diabetes <- relevel(RO1d1$Pre_Diabetes, ref = "No_Preexisting")
