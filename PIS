@@ -1,0 +1,21 @@
+##Load in PIS_Mothers dataset##
+
+PISMother <- PIS_Mothers
+
+##set dispensed date as date variable
+PISMother$date_dispensed <- PISMother$dispensed_date
+PISMother$date_dispensed <- as.numeric(paste0(PISMother$date_dispensed, "01"))
+transform(PISMother, date_dispensed=as.Date(as.character(date_dispensed), "%Y%m%d"))
+PISMother$date_dispensed <- ymd(PISMother$date_dispensed)
+
+PISMotherdatecheck <-PISMother
+PISMotherdatecheck <- subset(PISMotherdatecheck, select=c("mother_id", "date_dispensed", "dispensed_date"))
+
+##Now make sure you are not duplicating records of medication dispensed for each date and each drug, per person
+
+PISMother2 <- PISMother %>%
+  distinct(mother_id, date_dispensed, approved_name, .keep_all = TRUE)
+
+PISMother2 <- subset(PISMother2, select=c("mother_id", "date_dispensed", "approved_name"))
+
+
