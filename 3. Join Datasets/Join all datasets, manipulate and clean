@@ -2585,12 +2585,7 @@ RO1PIS <- RO1PIS %>%
 
 
 RO1PIS$PregnancyNumber <- RO1PIS$PregnancyNumber.x
-RO1d1 <- RO1d1 %>%
-  ungroup
-RO1PIS <- RO1PIS %>%
-  ungroup
-ResearchQuestion1b <- ResearchQuestion1b %>%
-  ungroup
+
 RO1PIS <- left_join(RO1PIS, ResearchQuestion1b, by=c("mother_id", "PregnancyNumber"), keep = F, multiple = "first", unmatched = "drop", relationship = "many-to-one")
 
 ##
